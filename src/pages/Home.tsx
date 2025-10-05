@@ -80,8 +80,8 @@ export default function Home() {
             >
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Doctor Derma"
+                  src="./images/dr1.png"
+                  alt="Bhargava Clinic"
                   className="w-full h-[600px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent"></div>
@@ -168,7 +168,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6">Why Choose Doctor Derma?</h2>
+              <h2 className="text-4xl font-bold mb-6">Why Choose Bhargava Clinic?</h2>
               <p className="text-xl text-blue-100 mb-8 leading-relaxed">
                 We combine medical expertise with cutting-edge technology to deliver
                 exceptional results in a caring, professional environment.

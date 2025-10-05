@@ -68,7 +68,7 @@ export default function BlogPost() {
         </ul>
 
         <h2>Treatment Options</h2>
-        <p>At Doctor Derma Clinic, we offer a range of effective acne treatments:</p>
+        <p>At Bhargava Clinic, we offer a range of effective acne treatments:</p>
 
         <h3>Topical Treatments</h3>
         <p>We prescribe medical-grade retinoids, benzoyl peroxide, and salicylic acid formulations that target acne at its source. These treatments help unclog pores, reduce inflammation, and prevent new breakouts.</p>

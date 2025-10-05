@@ -1,13 +1,243 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, BarChart3, Settings, ArrowLeft } from 'lucide-react';
+import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw } from 'lucide-react';
 import ContactListTable from './ContactListTable';
 import AppointmentListTable from './AppointmentListTable';
+import { getContactStats, getAppointmentStats, getContacts, getAppointments } from '../services/apiService';
 
 type AdminTab = 'overview' | 'contacts' | 'appointments' | 'settings';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+  const [contactStats, setContactStats] = useState({
+    total: 0,
+    new: 0,
+    read: 0,
+    replied: 0,
+    archived: 0,
+    highPriority: 0,
+    mediumPriority: 0,
+    lowPriority: 0
+  });
+  const [appointmentStats, setAppointmentStats] = useState({
+    total: 0,
+    pending: 0,
+    confirmed: 0,
+    cancelled: 0,
+    completed: 0,
+    noShow: 0,
+    highPriority: 0,
+    mediumPriority: 0,
+    lowPriority: 0
+  });
+  const [monthlyStats, setMonthlyStats] = useState({
+    contactsThisMonth: 0,
+    appointmentsThisMonth: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Function to get current month's start and end dates
+  const getCurrentMonthRange = () => {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    return {
+      start: startOfMonth.toISOString(),
+      end: endOfMonth.toISOString()
+    };
+  };
+
+  // Function to get last 30 days range (fallback)
+  const getLast30DaysRange = () => {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+    return {
+      start: thirtyDaysAgo.toISOString(),
+      end: now.toISOString()
+    };
+  };
+
+  // Function to fetch monthly statistics
+  const fetchMonthlyStats = async () => {
+    try {
+      const { start, end } = getCurrentMonthRange();
+      const { start: last30Start, end: last30End } = getLast30DaysRange();
+      
+      const [contactsResponse, appointmentsResponse] = await Promise.all([
+        getContacts({ page: 1, limit: 1000 }), // Get all contacts to filter by date
+        getAppointments({ page: 1, limit: 1000 }) // Get all appointments to filter by date
+      ]);
+
+      let contactsThisMonth = 0;
+      let appointmentsThisMonth = 0;
+
+      if (contactsResponse.success && contactsResponse.data?.contacts) {
+        const contacts = contactsResponse.data.contacts;
+        console.log(`📞 Total contacts found: ${contacts.length}`);
+        
+        // Try current month first
+        contactsThisMonth = contacts.filter((contact: any) => {
+          const contactDate = new Date(contact.createdAt);
+          const isThisMonth = contactDate >= new Date(start) && contactDate <= new Date(end);
+          return isThisMonth;
+        }).length;
+
+        // If no contacts this month, try last 30 days
+        if (contactsThisMonth === 0) {
+          contactsThisMonth = contacts.filter((contact: any) => {
+            const contactDate = new Date(contact.createdAt);
+            const isLast30Days = contactDate >= new Date(last30Start) && contactDate <= new Date(last30End);
+            return isLast30Days;
+          }).length;
+        }
+      }
+
+      if (appointmentsResponse.success && appointmentsResponse.data?.appointments) {
+        const appointments = appointmentsResponse.data.appointments;
+        console.log(`📅 Total appointments found: ${appointments.length}`);
+        
+        // Try current month first
+        appointmentsThisMonth = appointments.filter((appointment: any) => {
+          const appointmentDate = new Date(appointment.createdAt);
+          const isThisMonth = appointmentDate >= new Date(start) && appointmentDate <= new Date(end);
+          return isThisMonth;
+        }).length;
+
+        // If no appointments this month, try last 30 days
+        if (appointmentsThisMonth === 0) {
+          appointmentsThisMonth = appointments.filter((appointment: any) => {
+            const appointmentDate = new Date(appointment.createdAt);
+            const isLast30Days = appointmentDate >= new Date(last30Start) && appointmentDate <= new Date(last30End);
+            return isLast30Days;
+          }).length;
+        }
+      }
+
+      console.log(`✅ Monthly stats: Contacts: ${contactsThisMonth}, Appointments: ${appointmentsThisMonth}`);
+
+      setMonthlyStats({
+        contactsThisMonth,
+        appointmentsThisMonth
+      });
+    } catch (err) {
+      console.error('Failed to fetch monthly statistics:', err);
+    }
+  };
+
+  // Fetch statistics when component mounts
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [contactResponse, appointmentResponse] = await Promise.all([
+          getContactStats(),
+          getAppointmentStats()
+        ]);
+
+        if (contactResponse.success && contactResponse.data) {
+          setContactStats(contactResponse.data);
+        }
+
+        if (appointmentResponse.success && appointmentResponse.data) {
+          setAppointmentStats(appointmentResponse.data);
+        }
+
+        // Fetch monthly statistics
+        await fetchMonthlyStats();
+      } catch (err: any) {
+        console.error('Failed to fetch statistics:', err);
+        
+      setError('Failed to load statistics. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Refresh statistics when switching to overview tab
+  useEffect(() => {
+    if (activeTab === 'overview') {
+      const fetchStats = async () => {
+        try {
+          const [contactResponse, appointmentResponse] = await Promise.all([
+            getContactStats(),
+            getAppointmentStats()
+          ]);
+
+          if (contactResponse.success && contactResponse.data) {
+            setContactStats(contactResponse.data);
+          }
+
+          if (appointmentResponse.success && appointmentResponse.data) {
+            setAppointmentStats(appointmentResponse.data);
+          }
+        } catch (err) {
+          console.error('Failed to refresh statistics:', err);
+        }
+      };
+
+      fetchStats();
+    }
+  }, [activeTab]);
+
+  // Listen for updates to refresh statistics
+  useEffect(() => {
+    const handleAppointmentUpdate = () => {
+      if (activeTab === 'overview') {
+        refreshStats();
+      }
+    };
+
+    const handleContactUpdate = () => {
+      if (activeTab === 'overview') {
+        refreshStats();
+      }
+    };
+
+    // Listen for custom events when appointments or contacts are updated
+    window.addEventListener('appointmentUpdated', handleAppointmentUpdate);
+    window.addEventListener('contactUpdated', handleContactUpdate);
+
+    return () => {
+      window.removeEventListener('appointmentUpdated', handleAppointmentUpdate);
+      window.removeEventListener('contactUpdated', handleContactUpdate);
+    };
+  }, [activeTab]);
+
+  // Function to refresh statistics
+  const refreshStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const [contactResponse, appointmentResponse] = await Promise.all([
+        getContactStats(),
+        getAppointmentStats()
+      ]);
+
+      if (contactResponse.success && contactResponse.data) {
+        setContactStats(contactResponse.data);
+      }
+
+      if (appointmentResponse.success && appointmentResponse.data) {
+        setAppointmentStats(appointmentResponse.data);
+      }
+
+      // Fetch monthly statistics
+      await fetchMonthlyStats();
+    } catch (err: any) {
+      console.error('Failed to refresh statistics:', err);
+      
+      setError('Failed to refresh statistics. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -25,7 +255,19 @@ export default function AdminDashboard() {
       case 'overview':
         return (
           <div className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600">{error}</p>
+                <button
+                  onClick={refreshStats}
+                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
               {/* Stats Cards */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -39,7 +281,9 @@ export default function AdminDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Total Contacts</p>
-                    <p className="text-2xl font-bold text-gray-900">-</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : contactStats.total}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -56,7 +300,9 @@ export default function AdminDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Total Appointments</p>
-                    <p className="text-2xl font-bold text-gray-900">-</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : appointmentStats.total}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -73,7 +319,9 @@ export default function AdminDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Pending Appointments</p>
-                    <p className="text-2xl font-bold text-gray-900">-</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : appointmentStats.pending}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -89,8 +337,48 @@ export default function AdminDashboard() {
                     <BarChart3 className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">This Month</p>
-                    <p className="text-2xl font-bold text-gray-900">-</p>
+                    <p className="text-sm font-medium text-gray-600">New Contacts</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : contactStats.new}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.4 }}
+                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+              >
+                <div className="flex items-center">
+                  <div className="p-2 bg-indigo-100 rounded-lg">
+                    <Users className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Recent Contacts</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : monthlyStats.contactsThisMonth}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.5 }}
+                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+              >
+                <div className="flex items-center">
+                  <div className="p-2 bg-teal-100 rounded-lg">
+                    <Calendar className="w-6 h-6 text-teal-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Bookings This Month</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : monthlyStats.appointmentsThisMonth}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -188,6 +476,14 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={refreshStats}
+                disabled={loading}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Refresh Statistics"
+              >
+                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+              </button>
               <div className="text-sm text-gray-600">
                 Welcome, Shashank
               </div>

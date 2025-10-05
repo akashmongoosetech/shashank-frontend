@@ -27,7 +27,7 @@ export default function Navbar() {
               <Stethoscope className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-blue-900">Doctor Derma</h1>
+              <h1 className="text-2xl font-bold text-blue-900">Bhargava Clinic</h1>
               <p className="text-xs text-gray-600">Skin & Hair Clinic</p>
             </div>
           </Link>

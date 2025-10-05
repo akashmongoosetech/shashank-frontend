@@ -189,7 +189,7 @@ export default function BookAppointment() {
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Appointment Requested!</h2>
           <p className="text-gray-600 mb-6 leading-relaxed">
-            Thank you for booking an appointment with Doctor Derma. We have received your request and
+            Thank you for booking an appointment with Bhargava Clinic. We have received your request and
             will contact you shortly to confirm your appointment.
           </p>
           <button

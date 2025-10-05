@@ -32,7 +32,7 @@ export default function Testimonials() {
       image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
       rating: 5,
       treatment: 'Hair Transplant',
-      review: 'The hair transplant procedure was life-changing. Professional service from start to finish, and the results look completely natural. I could not be happier with my decision to choose Doctor Derma Clinic!',
+      review: 'The hair transplant procedure was life-changing. Professional service from start to finish, and the results look completely natural. I could not be happier with my decision to choose Bhargava Clinic!',
     },
     {
       name: 'Jessica Martinez',

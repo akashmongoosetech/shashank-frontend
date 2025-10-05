@@ -12,7 +12,7 @@ export default function Footer() {
                 <Stethoscope className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Doctor Derma</h3>
+                <h3 className="text-xl font-bold">Bhargava Clinic</h3>
                 <p className="text-xs text-blue-200">Skin & Hair Clinic</p>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-blue-700 mt-8 pt-8 text-center text-blue-100 text-sm">
-          <p>&copy; {new Date().getFullYear()} Doctor Derma Clinic. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Bhargava Clinic. All rights reserved.</p>
         </div>
       </div>
     </footer>

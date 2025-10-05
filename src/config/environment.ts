@@ -5,11 +5,11 @@ export const config = {
   apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '10000'),
 
   // App Configuration
-  appName: import.meta.env.VITE_APP_NAME || 'Doctor Derma Clinic',
+  appName: import.meta.env.VITE_APP_NAME || 'Bhargava Clinic Clinic',
   appVersion: import.meta.env.VITE_APP_VERSION || '1.0.0',
 
   // Clinic Information
-  clinicName: import.meta.env.VITE_CLINIC_NAME || 'Doctor Derma Clinic',
+  clinicName: import.meta.env.VITE_CLINIC_NAME || 'Bhargava Clinic Clinic',
   clinicEmail: import.meta.env.VITE_CLINIC_EMAIL || 'info@doctorderma.com',
   clinicPhone: import.meta.env.VITE_CLINIC_PHONE || '+1 (555) 123-4567',
   clinicAddress: import.meta.env.VITE_CLINIC_ADDRESS || '123 Medical Plaza, Health District, City 12345',

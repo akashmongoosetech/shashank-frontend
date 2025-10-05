@@ -1,4 +1,4 @@
-# Doctor Derma Frontend - API Integration
+# Bhargava Clinic Frontend - API Integration
 
 Note: Supabase has been removed from this frontend. The project now uses the backend API (`VITE_API_URL`). If you previously installed Supabase packages, run the cleanup steps below.
 
@@ -17,7 +17,7 @@ This removes Supabase packages and regenerates the lockfile. If you prefer not t
 
 ## Overview
 
-The frontend now includes full API integration with environment configuration for the Doctor Derma Clinic backend. All forms and data operations are connected to the backend API with proper error handling and loading states.
+The frontend now includes full API integration with environment configuration for the Bhargava Clinic Clinic backend. All forms and data operations are connected to the backend API with proper error handling and loading states.
 
 ## Features
 
@@ -50,11 +50,11 @@ VITE_API_URL=http://localhost:5000
 VITE_API_TIMEOUT=10000
 
 # App Configuration
-VITE_APP_NAME=Doctor Derma Clinic
+VITE_APP_NAME=Bhargava Clinic Clinic
 VITE_APP_VERSION=1.0.0
 
 # Contact Information
-VITE_CLINIC_NAME=Doctor Derma Clinic
+VITE_CLINIC_NAME=Bhargava Clinic Clinic
 VITE_CLINIC_EMAIL=info@doctorderma.com
 VITE_CLINIC_PHONE=+1 (555) 123-4567
 VITE_CLINIC_ADDRESS=123 Medical Plaza, Health District, City 12345
@@ -163,7 +163,7 @@ import config from '../config/environment';
 
 // Access configuration
 console.log(config.apiUrl); // http://localhost:5000
-console.log(config.clinicName); // Doctor Derma Clinic
+console.log(config.clinicName); // Bhargava Clinic Clinic
 console.log(config.whatsappNumber); // 1234567890
 
 // Validation

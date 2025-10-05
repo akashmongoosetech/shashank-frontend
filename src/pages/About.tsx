@@ -33,7 +33,7 @@ export default function About() {
   ];
 
   const achievements = [
-    { year: '2010', title: 'Clinic Established', description: 'Opened Doctor Derma Clinic' },
+    { year: '2010', title: 'Clinic Established', description: 'Opened Bhargava Clinic' },
     { year: '2015', title: 'Excellence Award', description: 'Best Dermatology Clinic in Region' },
     { year: '2018', title: 'Advanced Technology', description: 'Introduced state-of-the-art laser equipment' },
     { year: '2023', title: '10,000+ Patients', description: 'Milestone of successfully treated patients' },
@@ -49,7 +49,7 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h1 className="text-5xl font-bold mb-6">About Doctor Derma</h1>
+            <h1 className="text-5xl font-bold mb-6">About Bhargava Clinic</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
               Dedicated to providing exceptional dermatological care with compassion and expertise
             </p>
@@ -68,7 +68,7 @@ export default function About() {
             >
               <div className="relative">
                 <img
-                  src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  src="./images/dr.png"
                   alt="Dr. Sarah Johnson"
                   className="rounded-2xl shadow-2xl w-full"
                 />
@@ -85,15 +85,15 @@ export default function About() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">Meet Dr. Sarah Johnson</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">Meet Dr. Shashank Bhargava</h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Dr. Sarah Johnson is a board-certified dermatologist with over 15 years of experience
-                in treating various skin and hair conditions. She founded Doctor Derma Clinic with a
+                Dr. Shashank Bhargava is a board-certified dermatologist with over 15 years of experience
+                in treating various skin and hair conditions. She founded Bhargava Clinic with a
                 vision to provide world-class dermatological care that is accessible, affordable,
                 and patient-centered.
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Dr. Johnson completed her medical degree from Harvard Medical School and specialized
+                Dr. Shashank Bhargava completed her medical degree from Harvard Medical School and specialized
                 in dermatology at Johns Hopkins Hospital. She has a special interest in cosmetic
                 dermatology and has helped thousands of patients achieve their skin goals.
               </p>
