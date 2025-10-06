@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Eye, Edit, Trash2, Search } from 'lucide-react';
 import { getContacts, deleteContact, updateContact } from '../services/apiService';
 import type { Contact, ContactUpdateData } from '../services/apiService';
 
@@ -25,6 +25,9 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
   const [totalPages, setTotalPages] = useState(1);
   const [selected, setSelected] = useState<Contact | null>(null);
   const [editing, setEditing] = useState<Contact | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   // Listen for contact updates via custom events
   useEffect(() => {
@@ -53,9 +56,14 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
   const fetchPage = async (p = 1) => {
     setLoading(true);
     try {
-      const resp = await getContacts({ page: p, limit: pageSize });
+      const params: any = { page: p, limit: pageSize };
+      if (searchTerm) params.search = searchTerm;
+      if (dateFrom) params.dateFrom = dateFrom;
+      if (dateTo) params.dateTo = dateTo;
+
+      const resp = await getContacts(params);
       console.log('API Response:', resp); // Debug log
-      
+
       if (resp.success && resp.data) {
         // The API returns { contacts: [...], pagination: {...} }
         const apiData = resp.data;
@@ -135,6 +143,56 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
         <h2 className="text-xl font-semibold">Contacts</h2>
         <div className="text-sm text-gray-500">
           {loading ? 'Loading...' : `${contacts.length} items`}
+        </div>
+      </div>
+
+      {/* Search and Date Filters */}
+      <div className="mb-4 space-y-4">
+        {/* Search Input */}
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search contacts by name, email, subject, or message..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && fetchPage(1)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Date Filters */}
+        <div className="flex items-center space-x-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex items-end">
+            <button
+              onClick={() => fetchPage(1)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Apply Filters
+            </button>
+          </div>
         </div>
       </div>
       

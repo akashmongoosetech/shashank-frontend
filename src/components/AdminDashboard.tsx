@@ -65,8 +65,8 @@ export default function AdminDashboard() {
       const { start: last30Start, end: last30End } = getLast30DaysRange();
       
       const [contactsResponse, appointmentsResponse] = await Promise.all([
-        getContacts({ page: 1, limit: 1000 }), // Get all contacts to filter by date
-        getAppointments({ page: 1, limit: 1000 }) // Get all appointments to filter by date
+        getContacts({ page: 1, limit: 100 }), // Get all contacts to filter by date
+        getAppointments({ page: 1, limit: 100 }) // Get all appointments to filter by date
       ]);
 
       let contactsThisMonth = 0;

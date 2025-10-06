@@ -215,6 +215,8 @@ class ApiService {
     status?: string;
     priority?: string;
     search?: string;
+    dateFrom?: string;
+    dateTo?: string;
   }): Promise<ApiResponse<PaginatedResponse<Contact>>> {
     const searchParams = new URLSearchParams();
     if (params) {
@@ -334,6 +336,8 @@ export const getContacts = (params?: {
   status?: string;
   priority?: string;
   search?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }) => apiService.getContacts(params);
 export const getContact = (id: string) => apiService.getContact(id);
 export const updateContact = (id: string, data: ContactUpdateData) => apiService.updateContact(id, data);

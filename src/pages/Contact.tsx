@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Phone, Mail, Send, Facebook, Instagram, Twitter, MessageSquare, Clock as ClockIcon, MapPin as LocationIcon } from 'lucide-react';
 import { createContact } from '../services/apiService';
+import PageBanner from '../components/PageBanner';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -71,10 +72,10 @@ export default function Contact() {
       if (response.success) {
         setIsSubmitted(true);
         setFormData({ name: '', email: '', subject: '', message: '' });
-        
+
         // Dispatch custom event to notify other components
         window.dispatchEvent(new CustomEvent('contactUpdated'));
-        
+
         setTimeout(() => {
           setIsSubmitted(false);
         }, 5000);
@@ -86,7 +87,7 @@ export default function Contact() {
       // If the API client throws a structured error, surface its message
       const err = error as Error & { status?: number; payload?: unknown };
       console.error('Error submitting form:', err.status, err.payload, err.message);
-      
+
       // Handle validation errors specifically
       if (err.status === 400 && err.payload) {
         const payload = err.payload as { success: boolean; message: string; errors: Array<{ msg: string; param: string; value: any }> };
@@ -97,16 +98,16 @@ export default function Contact() {
           return;
         }
       }
-      
+
       // Show user-friendly error message for other errors
-      const errorMessage = err.status === 400 
+      const errorMessage = err.status === 400
         ? 'Please check your form data and try again.'
         : err.status === 429
         ? 'Too many requests. Please wait a moment and try again.'
         : err.status === 500
         ? 'Server error. Please try again later.'
         : 'Failed to send message. Please try again later.';
-        
+
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -123,47 +124,114 @@ export default function Contact() {
 
   const contactInfo = [
     {
-      icon: MapPin,
+      icon: LocationIcon,
       title: 'Visit Us',
-      details: ['123 Medical Plaza', 'Health District, City 12345'],
+      details: ['MPEB office, opposite gate no 4', 'Madhav Nagar, Ujjain, Madhya Pradesh 456010'],
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       icon: Phone,
       title: 'Call Us',
-      details: ['+1 (555) 123-4567', '+1 (555) 987-6543'],
+      details: ['+919329198211'],
+      color: 'from-green-500 to-emerald-500',
     },
     {
       icon: Mail,
       title: 'Email Us',
-      details: ['info@doctorderma.com', 'support@doctorderma.com'],
+      details: ['info@bhargavaclinic.com', 'support@bhargavaclinic.com'],
+      color: 'from-purple-500 to-pink-500',
     },
     {
-      icon: Clock,
+      icon: ClockIcon,
       title: 'Working Hours',
       details: ['Mon-Fri: 9:00 AM - 7:00 PM', 'Sat: 10:00 AM - 5:00 PM', 'Sun: Closed'],
+      color: 'from-orange-500 to-red-500',
     },
+  ];
+
+  const stats = [
+    { value: '24/7', label: 'Support Available', icon: MessageSquare },
+    { value: '< 1hr', label: 'Response Time', icon: ClockIcon },
+    { value: '100%', label: 'Secure & Private', icon: Mail },
+  ];
+
+  const socialLinks = [
+    {
+      name: 'Facebook',
+      href: 'https://www.facebook.com/shashank.bhargava.90',
+      icon: Facebook,
+      gradient: 'from-blue-600 to-blue-700',
+    },
+    {
+      name: 'Instagram',
+      href: 'https://www.instagram.com/the_dermat_bhargava/',
+      icon: Instagram,
+      gradient: 'from-pink-600 to-pink-700',
+    },
+    // {
+    //   name: 'Twitter',
+    //   href: 'https://youtube.com/@bhargavaclinic',
+    //   icon: Twitter,
+    //   gradient: 'from-black to-black',
+    // },
   ];
 
   return (
     <div>
-      <section className="relative bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
+      {/* Page Banner */}
+      <PageBanner
+        title="Contact Us"
+        subtitle="Have questions? We would love to hear from you. Get in touch with our team!"
+        // icon={MessageSquare}
+        gradient="from-blue-600 to-blue-800"
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Contact' },
+        ]}
+      />
+
+      {/* Stats Section */}
+      <section className="py-16 bg-white relative -mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h1 className="text-5xl font-bold mb-6">Contact Us</h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Have questions? We would love to hear from you. Get in touch with our team!
-            </p>
-          </motion.div>
+          <div className="grid grid-cols-3 gap-6">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="card-modern p-6 text-center"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl mb-4">
+                  <stat.icon className="w-8 h-8 text-white" />
+                </div>
+                <p className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</p>
+                <p className="text-gray-600 font-medium">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      {/* Contact Info Cards */}
+      <section className="section-padding bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="section-title">
+              Get in <span className="text-gradient">Touch</span>
+            </h2>
+            <p className="section-subtitle">
+              Multiple ways to reach us - we're here to help you achieve your skin health goals
+            </p>
+          </motion.div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {contactInfo.map((info, index) => (
               <motion.div
@@ -172,24 +240,27 @@ export default function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="text-center"
+                className="group"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                  <info.icon className="w-8 h-8 text-blue-600" />
+                <div className="card-modern p-6 text-center h-full">
+                  <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${info.color} rounded-2xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                    <info.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{info.title}</h3>
+                  {info.details.map((detail, idx) => (
+                    <p key={idx} className="text-gray-600 mb-2 leading-relaxed">
+                      {detail}
+                    </p>
+                  ))}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{info.title}</h3>
-                {info.details.map((detail, idx) => (
-                  <p key={idx} className="text-gray-600">
-                    {detail}
-                  </p>
-                ))}
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      {/* Contact Form & Map */}
+      <section className="section-padding bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <motion.div
@@ -198,52 +269,59 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                Send Us a <span className="text-gradient">Message</span>
+              </h2>
               <p className="text-lg text-gray-600 mb-8">
                 Fill out the form below and we will get back to you as soon as possible.
               </p>
 
               {isSubmitted && (
-                <div className="bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg mb-6">
-                  Thank you for your message! We will get back to you soon.
+                <div className="bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-xl mb-6 flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm">✓</span>
+                  </div>
+                  <span className="font-medium">Thank you for your message! We will get back to you soon.</span>
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                    Your Name * <span className="text-sm text-gray-500">(2-100 characters)</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 border ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all`}
-                    placeholder="John Doe"
-                  />
-                  {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
+                      Your Name * <span className="text-sm text-gray-500">(2-100 characters)</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border ${
+                        errors.name ? 'border-red-500' : 'border-gray-300'
+                      } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all`}
+                      placeholder="John Doe"
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 border ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all`}
-                    placeholder="john@example.com"
-                  />
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  <div>
+                    <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border ${
+                        errors.email ? 'border-red-500' : 'border-gray-300'
+                      } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all`}
+                      placeholder="john@example.com"
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
                 </div>
 
                 <div>
@@ -258,7 +336,7 @@ export default function Contact() {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 border ${
                       errors.subject ? 'border-red-500' : 'border-gray-300'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all`}
+                    } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all`}
                     placeholder="How can we help you?"
                   />
                   {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject}</p>}
@@ -276,7 +354,7 @@ export default function Contact() {
                     rows={6}
                     className={`w-full px-4 py-3 border ${
                       errors.message ? 'border-red-500' : 'border-gray-300'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none`}
+                    } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none`}
                     placeholder="Tell us more about your inquiry..."
                   ></textarea>
                   {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
@@ -285,7 +363,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full flex items-center justify-center px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg ${
+                  className={`w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:shadow-2xl transition-all duration-300 font-semibold text-lg transform hover:-translate-y-0.5 ${
                     isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -302,7 +380,7 @@ export default function Contact() {
               viewport={{ once: true }}
               className="h-full"
             >
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full">
+              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden h-full">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9476519598784!2d-73.99185368459395!3d40.74844097932847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus"
                   width="100%"
@@ -320,32 +398,29 @@ export default function Contact() {
         </div>
       </section>
 
-      <section className="py-16 bg-white">
+      {/* Social Media Section */}
+      <section className="py-16 bg-gradient-to-br from-indigo-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">Follow Us on Social Media</h3>
-            <div className="flex justify-center space-x-4">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a
-                href="#"
-                className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-6 h-6" />
-              </a>
-              <a
-                href="#"
-                className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-6 h-6" />
-              </a>
+            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+              Stay connected and get the latest updates on skin care tips, treatment specials, and clinic news
+            </p>
+            <div className="flex justify-center space-x-6">
+              {socialLinks.map((social) => (
+                <motion.a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r ${social.gradient} text-white rounded-2xl hover:shadow-lg transition-all duration-300`}
+                  aria-label={social.name}
+                >
+                  <social.icon className="w-7 h-7" />
+                </motion.a>
+              ))}
             </div>
           </div>
         </div>
