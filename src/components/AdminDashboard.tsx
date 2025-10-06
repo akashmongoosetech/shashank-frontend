@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw, Mail } from 'lucide-react';
 import ContactListTable from './ContactListTable';
 import AppointmentListTable from './AppointmentListTable';
+import SubscriberListTable from './SubscriberListTable';
 import { getContactStats, getAppointmentStats, getContacts, getAppointments } from '../services/apiService';
 
-type AdminTab = 'overview' | 'contacts' | 'appointments' | 'settings';
+type AdminTab = 'overview' | 'contacts' | 'appointments' | 'subscribers' | 'settings';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -243,6 +244,7 @@ export default function AdminDashboard() {
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
+    { id: 'subscribers', label: 'Subscribers', icon: Mail },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -252,6 +254,8 @@ export default function AdminDashboard() {
         return <ContactListTable className="mt-6" />;
       case 'appointments':
         return <AppointmentListTable className="mt-6" />;
+      case 'subscribers':
+        return <SubscriberListTable className="mt-6" />;
       case 'overview':
         return (
           <div className="mt-6">
@@ -493,7 +497,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 mt-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8">
             {tabs.map((tab) => {

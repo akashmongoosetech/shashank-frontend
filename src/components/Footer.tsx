@@ -1,9 +1,53 @@
 import { Link } from 'react-router-dom';
 import { Stethoscope, MapPin, Phone, Mail, Facebook, Instagram, Youtube, Twitter, Clock, ArrowRight, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { createSubscription } from '../services/apiService';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const [subscribeEmail, setSubscribeEmail] = useState('');
+  const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
+  const [subscribeError, setSubscribeError] = useState<string | null>(null);
+
+  const isValidEmail = (email: string) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(email);
+
+  const handleSubscribe = async () => {
+    setSubscribeMessage(null);
+    setSubscribeError(null);
+
+    if (!isValidEmail(subscribeEmail)) {
+      setSubscribeError('Please enter a valid email');
+      return;
+    }
+
+    setSubscribeLoading(true);
+    try {
+      const res = await createSubscription({ email: subscribeEmail, source: 'footer' });
+      if (res.success) {
+        setSubscribeMessage(res.message || 'Subscribed successfully');
+        setSubscribeEmail('');
+        setTimeout(() => {
+          setSubscribeMessage(null);
+        }, 2000);
+      } else {
+        setSubscribeError(res.message || 'Subscription failed');
+        setTimeout(() => {
+          setSubscribeError(null);
+        }, 2000);
+      }
+    } catch (error) {
+      const err = error as Error & { status?: number };
+      setSubscribeError(err.message || 'Subscription failed');
+      setTimeout(() => {
+        setSubscribeError(null);
+      }, 2000);
+    } finally {
+      setSubscribeLoading(false);
+    }
+  };
 
   const quickLinks = [
     { path: '/about', label: 'About Us' },
@@ -203,15 +247,29 @@ export default function Footer() {
               <h4 className="text-xl font-bold mb-2">Stay Updated</h4>
               <p className="text-gray-300 text-sm">Subscribe to our newsletter for health tips and special offers</p>
             </div>
-            <div className="flex w-full md:w-auto gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 md:w-64 px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
-                Subscribe
-              </button>
+            <div className="w-full md:w-auto">
+              <div className="flex w-full md:w-auto gap-2">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={subscribeEmail}
+                  onChange={(e) => setSubscribeEmail(e.target.value)}
+                  className="flex-1 md:w-64 px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
+                />
+                <button
+                  onClick={handleSubscribe}
+                  disabled={subscribeLoading}
+                  className={`px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap ${subscribeLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                >
+                  {subscribeLoading ? 'Subscribing...' : 'Subscribe'}
+                </button>
+              </div>
+              {subscribeError && (
+                <p className="text-red-300 text-sm mt-2">{subscribeError}</p>
+              )}
+              {subscribeMessage && !subscribeError && (
+                <p className="text-green-300 text-sm mt-2">{subscribeMessage}</p>
+              )}
             </div>
           </div>
         </motion.div>

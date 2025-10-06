@@ -22,6 +22,7 @@ export interface PaginationInfo {
 export interface PaginatedResponse<T> {
   contacts?: T[];
   appointments?: T[];
+  subscribers?: T[];
   pagination: PaginationInfo;
 }
 
@@ -141,6 +142,15 @@ export interface AppointmentStats {
 export interface TreatmentInfo {
   treatments: string[];
   timeSlots: string[];
+}
+
+// Subscriber Types
+export interface Subscriber {
+  _id: string;
+  email: string;
+  source?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // API Service Class
@@ -323,6 +333,34 @@ class ApiService {
   async healthCheck(): Promise<ApiResponse<unknown>> {
     return this.request<unknown>('/health');
   }
+
+  // Subscription
+  async createSubscription(data: { email: string; source?: string }): Promise<ApiResponse<void>> {
+    return this.request<void>('/api/subscriber', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getSubscribers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }): Promise<ApiResponse<PaginatedResponse<Subscriber>>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = queryString ? `/api/subscriber?${queryString}` : '/api/subscriber';
+
+    return this.request<PaginatedResponse<Subscriber>>(endpoint);
+  }
 }
 
 // Export singleton instance
@@ -362,3 +400,9 @@ export const confirmAppointment = (id: string, data: AppointmentConfirmData) => 
 export const getAppointmentStats = () => apiService.getAppointmentStats();
 export const getTreatments = () => apiService.getTreatments();
 export const healthCheck = () => apiService.healthCheck();
+export const createSubscription = (data: { email: string; source?: string }) => apiService.createSubscription(data);
+export const getSubscribers = (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}) => apiService.getSubscribers(params);
