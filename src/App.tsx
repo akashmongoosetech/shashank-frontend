@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Layout from './components/Layout';
 import WhatsAppButton from './components/WhatsAppButton';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -14,29 +15,33 @@ import Contact from './pages/Contact';
 import ContactListTable from './components/ContactListTable';
 import AppointmentListTable from './components/AppointmentListTable';
 import AdminDashboard from './components/AdminDashboard';
+import BlogAdmin from './components/BlogAdmin';
 
 function App() {
   return (
     <ErrorBoundary>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/treatments" element={<Treatments />} />
-            <Route path="/book-appointment" element={<BookAppointment />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/testimonials" element={<Testimonials />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/contacts" element={<ContactListTable />} />
-            <Route path="/admin/appointments" element={<AppointmentListTable />} />
-          </Routes>
-          <WhatsAppButton />
-        </Layout>
-      </Router>
+      <HelmetProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/treatments" element={<Treatments />} />
+              <Route path="/book-appointment" element={<BookAppointment />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/testimonials" element={<Testimonials />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/contacts" element={<ContactListTable />} />
+              <Route path="/admin/appointments" element={<AppointmentListTable />} />
+              <Route path="/admin/blogs" element={<BlogAdmin />} />
+            </Routes>
+            <WhatsAppButton />
+          </Layout>
+        </Router>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }

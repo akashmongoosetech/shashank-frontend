@@ -144,6 +144,45 @@ export interface TreatmentInfo {
   timeSlots: string[];
 }
 
+// Blog Types
+export interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image?: string;
+  author?: string;
+  category?: string;
+  readTime?: string;
+  tags: string[];
+  sections?: Array<{ title?: string; content: string; image?: string }>;
+  status: 'draft' | 'published';
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  metaDescription?: string;
+  seoKeywords?: string[];
+  metaTags?: string[];
+}
+
+export interface BlogFormData {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image?: string;
+  author?: string;
+  category?: string;
+  readTime?: string;
+  tags?: string[];
+  sections?: Array<{ title?: string; content: string; image?: string }>;
+  status?: 'draft' | 'published';
+  metaDescription?: string;
+  seoKeywords?: string[];
+  metaTags?: string[];
+}
+
 // Subscriber Types
 export interface Subscriber {
   _id: string;
@@ -329,6 +368,49 @@ class ApiService {
     return this.request<TreatmentInfo>('/api/appointment/treatments');
   }
 
+  // Blog API Methods
+  async createBlog(data: BlogFormData): Promise<ApiResponse<Blog>> {
+    return this.request<Blog>('/api/blog', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getBlogs(params?: {
+    page?: number;
+    limit?: number;
+    status?: 'draft' | 'published';
+    search?: string;
+    category?: string;
+  }): Promise<ApiResponse<{ blogs: Blog[]; pagination: PaginationInfo }>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const queryString = searchParams.toString();
+    const endpoint = queryString ? `/api/blog?${queryString}` : '/api/blog';
+    return this.request<{ blogs: Blog[]; pagination: PaginationInfo }>(endpoint);
+  }
+
+  async getBlogBySlug(slug: string): Promise<ApiResponse<Blog>> {
+    return this.request<Blog>(`/api/blog/${slug}`);
+  }
+
+  async updateBlog(id: string, data: BlogFormData): Promise<ApiResponse<Blog>> {
+    return this.request<Blog>(`/api/blog/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteBlog(id: string): Promise<ApiResponse<void>> {
+    return this.request<void>(`/api/blog/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Health Check
   async healthCheck(): Promise<ApiResponse<unknown>> {
     return this.request<unknown>('/health');
@@ -406,3 +488,16 @@ export const getSubscribers = (params?: {
   limit?: number;
   search?: string;
 }) => apiService.getSubscribers(params);
+
+// Blog exports
+export const createBlog = (data: BlogFormData) => apiService.createBlog(data);
+export const getBlogs = (params?: {
+  page?: number;
+  limit?: number;
+  status?: 'draft' | 'published';
+  search?: string;
+  category?: string;
+}) => apiService.getBlogs(params);
+export const getBlogBySlug = (slug: string) => apiService.getBlogBySlug(slug);
+export const updateBlog = (id: string, data: BlogFormData) => apiService.updateBlog(id, data);
+export const deleteBlog = (id: string) => apiService.deleteBlog(id);

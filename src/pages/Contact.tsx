@@ -289,7 +289,7 @@ export default function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                      Your Name * <span className="text-sm text-gray-500">(2-100 characters)</span>
+                      Your Name *
                     </label>
                     <input
                       type="text"
@@ -300,7 +300,7 @@ export default function Contact() {
                       className={`w-full px-4 py-3 border ${
                         errors.name ? 'border-red-500' : 'border-gray-300'
                       } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all`}
-                      placeholder="John Doe"
+                      placeholder="Akash Raikwar"
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                   </div>
@@ -318,7 +318,7 @@ export default function Contact() {
                       className={`w-full px-4 py-3 border ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all`}
-                      placeholder="john@example.com"
+                      placeholder="akash@example.com"
                     />
                     {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                   </div>
@@ -382,7 +382,7 @@ export default function Contact() {
             >
               <div className="bg-white rounded-2xl shadow-2xl overflow-hidden h-full">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9476519598784!2d-73.99185368459395!3d40.74844097932847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2860.6050696233838!2d75.78800267400636!3d23.18161021037709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396375db2b1bfc07%3A0x3f82285ec472d095!2sDr%20Shashank%20Bhargava%3A%20Fellow%20at%20University%20of%20Miami(USA)%2C%20Parma%20(Italy)!5e1!3m2!1sen!2sin!4v1759854425338!5m2!1sen!2sin"
                   width="100%"
                   height="500"
                   style={{ border: 0 }}
