@@ -1,6 +1,5 @@
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '10000');
 
 // API Response Types
 export interface ApiResponse<T = unknown> {
@@ -195,11 +194,9 @@ export interface Subscriber {
 // API Service Class
 class ApiService {
   private baseURL: string;
-  private timeout: number;
 
   constructor() {
     this.baseURL = API_BASE_URL;
-    this.timeout = API_TIMEOUT;
   }
 
   private async request<T>(
@@ -207,7 +204,7 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const defaultOptions: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -217,15 +214,7 @@ class ApiService {
     };
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-      const response = await fetch(url, {
-        ...defaultOptions,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+      const response = await fetch(url, defaultOptions);
 
       type Parsed = { message?: string } | null;
       let parsed: Parsed = null;

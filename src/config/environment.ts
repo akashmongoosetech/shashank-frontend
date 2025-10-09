@@ -5,17 +5,17 @@ export const config = {
   apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '10000'),
 
   // App Configuration
-  appName: import.meta.env.VITE_APP_NAME || 'Bhargava Clinic Clinic',
+  appName: import.meta.env.VITE_APP_NAME || 'Bhargava Clinic',
   appVersion: import.meta.env.VITE_APP_VERSION || '1.0.0',
 
   // Clinic Information
-  clinicName: import.meta.env.VITE_CLINIC_NAME || 'Bhargava Clinic Clinic',
-  clinicEmail: import.meta.env.VITE_CLINIC_EMAIL || 'info@doctorderma.com',
-  clinicPhone: import.meta.env.VITE_CLINIC_PHONE || '+1 (555) 123-4567',
-  clinicAddress: import.meta.env.VITE_CLINIC_ADDRESS || '123 Medical Plaza, Health District, City 12345',
+  clinicName: import.meta.env.VITE_CLINIC_NAME || 'Bhargava Clinic',
+  clinicEmail: import.meta.env.VITE_CLINIC_EMAIL || 'info@bhargavaclinic.com',
+  clinicPhone: import.meta.env.VITE_CLINIC_PHONE || '+919329198211',
+  clinicAddress: import.meta.env.VITE_CLINIC_ADDRESS || 'MPEB office, opposite gate no 4, Madhav Nagar, Ujjain, Madhya Pradesh 456010',
 
   // WhatsApp Configuration
-  whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '1234567890',
+  whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '919329198211',
   whatsappMessage: import.meta.env.VITE_WHATSAPP_MESSAGE || 'Hello, I would like to book an appointment',
 
   // Google Maps
