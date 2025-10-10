@@ -22,6 +22,7 @@ export interface PaginatedResponse<T> {
   contacts?: T[];
   appointments?: T[];
   subscribers?: T[];
+  feedback?: T[];
   pagination: PaginationInfo;
 }
 
@@ -189,6 +190,52 @@ export interface Subscriber {
   source?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// Feedback Types
+export interface Feedback {
+  _id: string;
+  name: string;
+  email: string;
+  rating: number;
+  treatment: string;
+  review: string;
+  image?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  isApproved: boolean;
+  approvedAt?: string;
+  featured: boolean;
+  tags: string[];
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeedbackFormData {
+  name: string;
+  email: string;
+  rating: number;
+  treatment: string;
+  review: string;
+  image?: string;
+}
+
+export interface FeedbackUpdateData {
+  status?: 'pending' | 'approved' | 'rejected';
+  isApproved?: boolean;
+  featured?: boolean;
+  tags?: string[];
+  adminNotes?: string;
+}
+
+export interface FeedbackStats {
+  total: number;
+  approved: number;
+  pending: number;
+  rejected: number;
+  featured: number;
+  averageRating: number;
+  ratingDistribution: { [key: number]: number };
 }
 
 // API Service Class
@@ -432,6 +479,79 @@ class ApiService {
 
     return this.request<PaginatedResponse<Subscriber>>(endpoint);
   }
+
+  // Feedback API Methods
+  async createFeedback(data: FeedbackFormData): Promise<ApiResponse<Feedback>> {
+    return this.request<Feedback>('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getFeedback(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    rating?: number;
+    treatment?: string;
+    featured?: boolean;
+    admin?: boolean;
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  }): Promise<ApiResponse<PaginatedResponse<Feedback>>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+    
+    const queryString = searchParams.toString();
+    const endpoint = queryString ? `/api/feedback?${queryString}` : '/api/feedback';
+    
+    return this.request<PaginatedResponse<Feedback>>(endpoint);
+  }
+
+  async getFeedbackById(id: string): Promise<ApiResponse<Feedback>> {
+    return this.request<Feedback>(`/api/feedback/${id}`);
+  }
+
+  async updateFeedback(id: string, data: FeedbackUpdateData): Promise<ApiResponse<Feedback>> {
+    return this.request<Feedback>(`/api/feedback/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteFeedback(id: string): Promise<ApiResponse<void>> {
+    return this.request<void>(`/api/feedback/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getFeaturedFeedback(limit?: number): Promise<ApiResponse<Feedback[]>> {
+    const endpoint = limit ? `/api/feedback/featured?limit=${limit}` : '/api/feedback/featured';
+    return this.request<Feedback[]>(endpoint);
+  }
+
+  async getFeedbackStats(): Promise<ApiResponse<FeedbackStats>> {
+    return this.request<FeedbackStats>('/api/feedback/stats/summary');
+  }
+
+  async approveFeedback(id: string): Promise<ApiResponse<Feedback>> {
+    return this.request<Feedback>(`/api/feedback/${id}/approve`, {
+      method: 'POST',
+    });
+  }
+
+  async toggleFeedbackFeatured(id: string): Promise<ApiResponse<Feedback>> {
+    return this.request<Feedback>(`/api/feedback/${id}/feature`, {
+      method: 'POST',
+    });
+  }
 }
 
 // Export singleton instance
@@ -490,3 +610,25 @@ export const getBlogs = (params?: {
 export const getBlogBySlug = (slug: string) => apiService.getBlogBySlug(slug);
 export const updateBlog = (id: string, data: BlogFormData) => apiService.updateBlog(id, data);
 export const deleteBlog = (id: string) => apiService.deleteBlog(id);
+
+// Feedback exports
+export const createFeedback = (data: FeedbackFormData) => apiService.createFeedback(data);
+export const getFeedback = (params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  rating?: number;
+  treatment?: string;
+  featured?: boolean;
+  admin?: boolean;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}) => apiService.getFeedback(params);
+export const getFeedbackById = (id: string) => apiService.getFeedbackById(id);
+export const updateFeedback = (id: string, data: FeedbackUpdateData) => apiService.updateFeedback(id, data);
+export const deleteFeedback = (id: string) => apiService.deleteFeedback(id);
+export const getFeaturedFeedback = (limit?: number) => apiService.getFeaturedFeedback(limit);
+export const getFeedbackStats = () => apiService.getFeedbackStats();
+export const approveFeedback = (id: string) => apiService.approveFeedback(id);
+export const toggleFeedbackFeatured = (id: string) => apiService.toggleFeedbackFeatured(id);

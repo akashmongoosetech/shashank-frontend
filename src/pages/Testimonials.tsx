@@ -1,10 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, ChevronLeft, ChevronRight, Quote, Heart, Users, Award } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, Quote, Heart, Users, Award, Plus } from 'lucide-react';
 import PageBanner from '../components/PageBanner';
+import FeedbackForm from '../components/FeedbackForm';
+import { getFeedback, getFeedbackStats, type Feedback, type FeedbackStats } from '../services/apiService';
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [dynamicTestimonials, setDynamicTestimonials] = useState<Feedback[]>([]);
+  const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [error, setError] = useState('');
+
+  // Load dynamic testimonials and stats
+  useEffect(() => {
+    const loadTestimonials = async () => {
+      try {
+        setLoading(true);
+        const [feedbackResponse, statsResponse] = await Promise.all([
+          getFeedback({ admin: false, limit: 20, page: 1 }),
+          getFeedbackStats()
+        ]);
+
+        if (feedbackResponse.success && feedbackResponse.data) {
+          setDynamicTestimonials(feedbackResponse.data.feedback || []);
+        }
+
+        if (statsResponse.success && statsResponse.data) {
+          setFeedbackStats(statsResponse.data);
+        }
+      } catch (err) {
+        console.error('Failed to load testimonials:', err);
+        setError('Failed to load testimonials');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTestimonials();
+  }, []);
+
+  const handleFeedbackSubmitSuccess = async () => {
+    setShowFeedbackForm(false);
+    // Reload testimonials after successful submission
+    try {
+      const feedbackResponse = await getFeedback({ admin: false, limit: 20, page: 1 });
+      if (feedbackResponse.success && feedbackResponse.data) {
+        setDynamicTestimonials(feedbackResponse.data.feedback || []);
+      }
+    } catch (err) {
+      console.error('Failed to reload testimonials:', err);
+    }
+  };
 
   const testimonials = [
     {
@@ -51,18 +99,33 @@ export default function Testimonials() {
     },
   ];
 
+  // Combine static testimonials with dynamic ones for carousel
+  const allTestimonials = [...testimonials, ...dynamicTestimonials.slice(0, 6)];
+
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? allTestimonials.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev === allTestimonials.length - 1 ? 0 : prev + 1));
   };
 
-  const stats = [
-    { value: '500+', label: 'Happy Patients', icon: Users },
-    { value: '4.9/5', label: 'Average Rating', icon: Star },
-    { value: '98%', label: 'Satisfaction Rate', icon: Heart },
+  const displayStats = [
+    { 
+      value: feedbackStats ? `${feedbackStats.approved + 500}+` : '500+', 
+      label: 'Happy Patients', 
+      icon: Users 
+    },
+    { 
+      value: feedbackStats ? `${feedbackStats.averageRating}/5` : '4.9/5', 
+      label: 'Average Rating', 
+      icon: Star 
+    },
+    { 
+      value: '98%', 
+      label: 'Satisfaction Rate', 
+      icon: Heart 
+    },
   ];
 
   return (
@@ -83,7 +146,7 @@ export default function Testimonials() {
       <section className="py-16 bg-white relative -mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-3 gap-6">
-            {stats.map((stat, index) => (
+            {displayStats.map((stat, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -137,24 +200,24 @@ export default function Testimonials() {
               </div>
 
               <div className="flex items-center justify-center mb-6">
-                {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                {[...Array(allTestimonials[currentIndex]?.rating || 5)].map((_, i) => (
                   <Star key={i} className="w-6 h-6 text-yellow-400 fill-current mx-0.5" />
                 ))}
               </div>
 
               <p className="text-2xl text-gray-700 mb-8 leading-relaxed italic text-center">
-                "{testimonials[currentIndex].review}"
+                "{allTestimonials[currentIndex]?.review}"
               </p>
 
               <div className="flex items-center justify-center space-x-4">
                 <img
-                  src={testimonials[currentIndex].image}
-                  alt={testimonials[currentIndex].name}
+                  src={allTestimonials[currentIndex]?.image}
+                  alt={allTestimonials[currentIndex]?.name}
                   className="w-20 h-20 rounded-full object-cover border-4 border-blue-100"
                 />
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-gray-900">{testimonials[currentIndex].name}</h3>
-                  <p className="text-blue-600 font-medium">{testimonials[currentIndex].treatment}</p>
+                  <h3 className="text-xl font-bold text-gray-900">{allTestimonials[currentIndex]?.name}</h3>
+                  <p className="text-blue-600 font-medium">{allTestimonials[currentIndex]?.treatment}</p>
                 </div>
               </div>
             </motion.div>
@@ -169,7 +232,7 @@ export default function Testimonials() {
               </button>
 
               <div className="flex space-x-2">
-                {testimonials.map((_, index) => (
+                {allTestimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
@@ -212,9 +275,9 @@ export default function Testimonials() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+            {[...testimonials, ...dynamicTestimonials].map((testimonial, index) => (
               <motion.div
-                key={index}
+                key={`testimonial-${index}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -251,6 +314,58 @@ export default function Testimonials() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Feedback Form Section */}
+      <section className="section-padding bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="section-title">
+              Share Your <span className="text-gradient">Experience</span>
+            </h2>
+            <p className="section-subtitle">
+              Had a great experience with us? We'd love to hear about it!
+            </p>
+            
+            {!showFeedbackForm && (
+              <button
+                onClick={() => setShowFeedbackForm(true)}
+                className="btn-primary inline-flex items-center space-x-2 mt-6"
+              >
+                <Plus className="w-5 h-5" />
+                <span>Write a Review</span>
+              </button>
+            )}
+          </motion.div>
+
+          {showFeedbackForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <FeedbackForm 
+                onSubmitSuccess={handleFeedbackSubmitSuccess}
+                className="max-w-2xl mx-auto"
+              />
+              
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => setShowFeedbackForm(false)}
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          )}
         </div>
       </section>
 
