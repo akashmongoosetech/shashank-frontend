@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw, Mail } from 'lucide-react';
+import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw, Mail, MessageSquare } from 'lucide-react';
 import ContactListTable from './ContactListTable';
 import AppointmentListTable from './AppointmentListTable';
 import SubscriberListTable from './SubscriberListTable';
-import { getContactStats, getAppointmentStats, getContacts, getAppointments } from '../services/apiService';
+import FeedbackListTable from './FeedbackListTable';
+import { getContactStats, getAppointmentStats, getContacts, getAppointments, getFeedbackStats } from '../services/apiService';
 
-type AdminTab = 'overview' | 'contacts' | 'appointments' | 'subscribers' | 'settings';
+type AdminTab = 'overview' | 'contacts' | 'appointments' | 'subscribers' | 'feedback' | 'settings';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -30,6 +31,15 @@ export default function AdminDashboard() {
     highPriority: 0,
     mediumPriority: 0,
     lowPriority: 0
+  });
+  const [feedbackStats, setFeedbackStats] = useState({
+    total: 0,
+    approved: 0,
+    pending: 0,
+    rejected: 0,
+    featured: 0,
+    averageRating: 0,
+    ratingDistribution: {}
   });
   const [monthlyStats, setMonthlyStats] = useState({
     contactsThisMonth: 0,
@@ -133,9 +143,10 @@ export default function AdminDashboard() {
         setLoading(true);
         setError(null);
         
-        const [contactResponse, appointmentResponse] = await Promise.all([
+        const [contactResponse, appointmentResponse, feedbackResponse] = await Promise.all([
           getContactStats(),
-          getAppointmentStats()
+          getAppointmentStats(),
+          getFeedbackStats()
         ]);
 
         if (contactResponse.success && contactResponse.data) {
@@ -144,6 +155,10 @@ export default function AdminDashboard() {
 
         if (appointmentResponse.success && appointmentResponse.data) {
           setAppointmentStats(appointmentResponse.data);
+        }
+
+        if (feedbackResponse.success && feedbackResponse.data) {
+          setFeedbackStats(feedbackResponse.data);
         }
 
         // Fetch monthly statistics
@@ -165,9 +180,10 @@ export default function AdminDashboard() {
     if (activeTab === 'overview') {
       const fetchStats = async () => {
         try {
-          const [contactResponse, appointmentResponse] = await Promise.all([
+          const [contactResponse, appointmentResponse, feedbackResponse] = await Promise.all([
             getContactStats(),
-            getAppointmentStats()
+            getAppointmentStats(),
+            getFeedbackStats()
           ]);
 
           if (contactResponse.success && contactResponse.data) {
@@ -176,6 +192,10 @@ export default function AdminDashboard() {
 
           if (appointmentResponse.success && appointmentResponse.data) {
             setAppointmentStats(appointmentResponse.data);
+          }
+
+          if (feedbackResponse.success && feedbackResponse.data) {
+            setFeedbackStats(feedbackResponse.data);
           }
         } catch (err) {
           console.error('Failed to refresh statistics:', err);
@@ -216,9 +236,10 @@ export default function AdminDashboard() {
       setLoading(true);
       setError(null);
       
-      const [contactResponse, appointmentResponse] = await Promise.all([
+      const [contactResponse, appointmentResponse, feedbackResponse] = await Promise.all([
         getContactStats(),
-        getAppointmentStats()
+        getAppointmentStats(),
+        getFeedbackStats()
       ]);
 
       if (contactResponse.success && contactResponse.data) {
@@ -227,6 +248,10 @@ export default function AdminDashboard() {
 
       if (appointmentResponse.success && appointmentResponse.data) {
         setAppointmentStats(appointmentResponse.data);
+      }
+
+      if (feedbackResponse.success && feedbackResponse.data) {
+        setFeedbackStats(feedbackResponse.data);
       }
 
       // Fetch monthly statistics
@@ -245,6 +270,7 @@ export default function AdminDashboard() {
     { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'subscribers', label: 'Subscribers', icon: Mail },
+    { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -256,6 +282,8 @@ export default function AdminDashboard() {
         return <AppointmentListTable className="mt-6" />;
       case 'subscribers':
         return <SubscriberListTable className="mt-6" />;
+      case 'feedback':
+        return <FeedbackListTable className="mt-6" />;
       case 'overview':
         return (
           <div className="mt-6">
@@ -271,7 +299,7 @@ export default function AdminDashboard() {
               </div>
             )}
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-8 gap-6 mb-8">
               {/* Stats Cards */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -386,12 +414,50 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.6 }}
+                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+              >
+                <div className="flex items-center">
+                  <div className="p-2 bg-pink-100 rounded-lg">
+                    <Users className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Total Feedback</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : feedbackStats.total}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.7 }}
+                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+              >
+                <div className="flex items-center">
+                  <div className="p-2 bg-orange-100 rounded-lg">
+                    <BarChart3 className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Avg Rating</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {loading ? '...' : `${feedbackStats.averageRating}/5`}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
 
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <button
                   onClick={() => setActiveTab('contacts')}
                   className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
@@ -408,6 +474,15 @@ export default function AdminDashboard() {
                   <Calendar className="w-8 h-8 text-green-600 mb-2" />
                   <h4 className="font-medium text-gray-900">Manage Appointments</h4>
                   <p className="text-sm text-gray-600">View and manage appointment bookings</p>
+                </button>
+                
+                <button
+                  onClick={() => setActiveTab('feedback')}
+                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                >
+                  <MessageSquare className="w-8 h-8 text-pink-600 mb-2" />
+                  <h4 className="font-medium text-gray-900">Manage Feedback</h4>
+                  <p className="text-sm text-gray-600">View and moderate testimonials</p>
                 </button>
                 
                 <button

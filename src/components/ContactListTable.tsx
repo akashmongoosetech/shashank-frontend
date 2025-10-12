@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Eye, Edit, Trash2, Search } from 'lucide-react';
 import { getContacts, deleteContact, updateContact } from '../services/apiService';
 import type { Contact, ContactUpdateData } from '../services/apiService';
+import DeleteModal from './DeleteModal';
 
 type Props = { pageSize?: number; className?: string };
 
@@ -28,6 +29,9 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<Contact | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Listen for contact updates via custom events
   useEffect(() => {
@@ -87,16 +91,35 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this contact?')) return;
+  const handleDeleteClick = (contact: Contact) => {
+    setContactToDelete(contact);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!contactToDelete) return;
+
+    setIsDeleting(true);
     try {
-      const resp = await deleteContact(id);
-      if (resp.success) fetchPage(page);
-      else alert(resp.message || 'Delete failed');
+      const resp = await deleteContact(contactToDelete._id);
+      if (resp.success) {
+        fetchPage(page);
+        setDeleteModalOpen(false);
+        setContactToDelete(null);
+      } else {
+        alert(resp.message || 'Delete failed');
+      }
     } catch (err) {
       console.error('Delete error', err);
       alert('Delete failed');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setContactToDelete(null);
   };
 
   const handleStatusChange = async (id: string, status: BackendStatus) => {
@@ -274,7 +297,7 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
                   <Edit className="w-4 h-4 text-blue-600" />
                 </button>
                 <button
-                  onClick={() => handleDelete(c._id)}
+                  onClick={() => handleDeleteClick(c)}
                   title="Delete"
                   className="p-2 rounded hover:bg-gray-100"
                 >
@@ -356,6 +379,18 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
           </div>
         </div>
       )}
+
+      {/* Delete Modal */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Contact"
+        message={`Are you sure you want to delete the contact from "${contactToDelete?.name}"?`}
+        itemName="contact"
+        isDeleting={isDeleting}
+        successMessage={`Contact "${contactToDelete?.name}" has been deleted successfully.`}
+      />
     </div>
   );
 }

@@ -19,13 +19,14 @@ import {
   Eye,
   MoreHorizontal
 } from 'lucide-react';
-import { 
-  getAppointments, 
-  updateAppointment, 
-  deleteAppointment, 
-  Appointment, 
-  AppointmentUpdateData 
+import {
+  getAppointments,
+  updateAppointment,
+  deleteAppointment,
+  Appointment,
+  AppointmentUpdateData
 } from '../services/apiService';
+import DeleteModal from './DeleteModal';
 
 interface AppointmentListTableProps {
   className?: string;
@@ -79,6 +80,9 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingData, setEditingData] = useState<AppointmentUpdateData>({});
   const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const limit = 10;
 
@@ -178,16 +182,22 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
-      return;
-    }
+  const handleDeleteClick = (appointment: Appointment) => {
+    setAppointmentToDelete(appointment);
+    setDeleteModalOpen(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!appointmentToDelete) return;
+
+    setIsDeleting(true);
     try {
-      const response = await deleteAppointment(id);
+      const response = await deleteAppointment(appointmentToDelete._id);
       if (response.success) {
-        setAppointments(prev => prev.filter(apt => apt._id !== id));
-        console.log(`Appointment ${id} deleted successfully`);
+        setAppointments(prev => prev.filter(apt => apt._id !== appointmentToDelete._id));
+        console.log(`Appointment ${appointmentToDelete._id} deleted successfully`);
+        setDeleteModalOpen(false);
+        setAppointmentToDelete(null);
       } else {
         console.error('Failed to delete appointment:', response.message);
         alert('Failed to delete appointment. Please try again.');
@@ -195,7 +205,14 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
     } catch (error) {
       console.error('Error deleting appointment:', error);
       alert('Failed to delete appointment. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setAppointmentToDelete(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -517,7 +534,7 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(appointment._id)}
+                        onClick={() => handleDeleteClick(appointment)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                         title="Delete Appointment"
                       >
@@ -738,6 +755,18 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
           </div>
         </div>
       )}
+
+      {/* Delete Modal */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Appointment"
+        message={`Are you sure you want to delete the appointment for "${appointmentToDelete?.name}"?`}
+        itemName="appointment"
+        isDeleting={isDeleting}
+        successMessage={`Appointment for "${appointmentToDelete?.name}" has been deleted successfully.`}
+      />
     </div>
   );
 }
