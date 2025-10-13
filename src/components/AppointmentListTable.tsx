@@ -250,16 +250,16 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
   return (
     <div className={`bg-white rounded-lg shadow-lg ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Appointment Management</h2>
-            <p className="text-gray-600 mt-1">Manage and track all appointment bookings</p>
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Appointment Management</h2>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage and track all appointment bookings</p>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => fetchPage(page)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
             >
               Refresh
             </button>
@@ -268,8 +268,8 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
       </div>
 
       {/* Filters */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
           {/* Search */}
           <div className="lg:col-span-2">
             <div className="relative">
@@ -406,28 +406,28 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
             <p className="text-gray-600">Try adjusting your search criteria or check back later.</p>
           </div>
         ) : (
-          <table className="w-full">
+          <table className="w-full text-sm">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Reference
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Patient
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   Treatment
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date & Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                   Priority
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -441,51 +441,52 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
                   transition={{ duration: 0.3 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                    <div className="text-xs sm:text-sm font-medium text-gray-900">
                       {appointment.referenceId || `APT-${appointment._id.slice(-8).toUpperCase()}`}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-xs sm:text-sm text-gray-500">
                       {formatDate(appointment.createdAt)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <User className="h-5 w-5 text-blue-600" />
+                      <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                        <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                      <div className="ml-2 sm:ml-4">
+                        <div className="text-xs sm:text-sm font-medium text-gray-900">
                           {appointment.name}
                         </div>
-                        <div className="text-sm text-gray-500 flex items-center">
+                        <div className="text-xs sm:text-sm text-gray-500 flex items-center">
                           <Mail className="w-3 h-3 mr-1" />
-                          {appointment.email}
+                          <span className="hidden sm:inline">{appointment.email}</span>
+                          <span className="sm:hidden">Email</span>
                         </div>
-                        <div className="text-sm text-gray-500 flex items-center">
+                        <div className="text-xs sm:text-sm text-gray-500 flex items-center">
                           <Phone className="w-3 h-3 mr-1" />
                           {appointment.phone}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{appointment.treatmentType}</div>
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden md:table-cell">
+                    <div className="text-xs sm:text-sm text-gray-900">{appointment.treatmentType}</div>
                     {appointment.message && (
-                      <div className="text-sm text-gray-500 truncate max-w-xs" title={appointment.message}>
+                      <div className="text-xs sm:text-sm text-gray-500 truncate max-w-xs" title={appointment.message}>
                         {appointment.message}
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center text-sm text-gray-900">
-                      <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                    <div className="flex items-center text-xs sm:text-sm text-gray-900">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-400" />
                       {formatDate(appointment.preferredDate)}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                    <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-400" />
                       {formatTime(appointment.preferredTime)}
                     </div>
                     {appointment.confirmedDate && (
@@ -494,11 +495,11 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
                     <select
                       value={appointment.status}
                       onChange={(e) => handleStatusChange(appointment._id, e.target.value as BackendStatus)}
-                      className={`px-2 py-1 rounded-full text-xs font-medium border-0 focus:ring-2 focus:ring-blue-500 ${
+                      className={`px-1 sm:px-2 py-1 rounded-full text-xs font-medium border-0 focus:ring-2 focus:ring-blue-500 w-full sm:w-auto ${
                         STATUS_OPTIONS.find(s => s.value === appointment.status)?.color || 'bg-gray-100 text-gray-800'
                       }`}
                     >
@@ -509,11 +510,11 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
                       ))}
                     </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden lg:table-cell">
                     <select
                       value={appointment.priority}
                       onChange={(e) => handlePriorityChange(appointment._id, e.target.value as BackendPriority)}
-                      className={`px-2 py-1 rounded-full text-xs font-medium border-0 focus:ring-2 focus:ring-blue-500 ${
+                      className={`px-1 sm:px-2 py-1 rounded-full text-xs font-medium border-0 focus:ring-2 focus:ring-blue-500 ${
                         PRIORITY_OPTIONS.find(p => p.value === appointment.priority)?.color || 'bg-gray-100 text-gray-800'
                       }`}
                     >
@@ -524,21 +525,21 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
                       ))}
                     </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center space-x-2">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <button
                         onClick={() => setViewingAppointment(appointment)}
                         className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
                         title="View Details"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteClick(appointment)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                         title="Delete Appointment"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>
@@ -551,32 +552,32 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div className="text-xs sm:text-sm text-gray-700">
               Showing page {page} of {totalPages}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <button
                 onClick={() => fetchPage(page - 1)}
                 disabled={page <= 1}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+                className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
               >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Previous</span>
               </button>
-              
+
               {/* Page Numbers */}
               <div className="flex items-center space-x-1">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   const pageNum = Math.max(1, Math.min(totalPages - 4, page - 2)) + i;
                   if (pageNum > totalPages) return null;
-                  
+
                   return (
                     <button
                       key={pageNum}
                       onClick={() => fetchPage(pageNum)}
-                      className={`px-3 py-2 text-sm font-medium rounded-lg ${
+                      className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg ${
                         pageNum === page
                           ? 'bg-blue-600 text-white'
                           : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
@@ -591,10 +592,10 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
               <button
                 onClick={() => fetchPage(page + 1)}
                 disabled={page >= totalPages}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+                className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
               >
-                <span>Next</span>
-                <ChevronRight className="w-4 h-4" />
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             </div>
           </div>
@@ -770,3 +771,4 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
     </div>
   );
 }
+

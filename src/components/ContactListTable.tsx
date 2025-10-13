@@ -161,42 +161,42 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
   };
 
   return (
-    <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Contacts</h2>
+    <div className={`bg-white rounded-lg shadow p-3 sm:p-4 ${className}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+        <h2 className="text-lg sm:text-xl font-semibold">Contacts</h2>
         <div className="text-sm text-gray-500">
           {loading ? 'Loading...' : `${contacts.length} items`}
         </div>
       </div>
 
       {/* Search and Date Filters */}
-      <div className="mb-4 space-y-4">
+      <div className="mb-4 space-y-3 sm:space-y-4">
         {/* Search Input */}
-        <div className="flex items-center space-x-4">
-          <div className="flex-1 max-w-md">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+          <div className="flex-1 max-w-full sm:max-w-md">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search contacts by name, email, subject, or message..."
+                placeholder="Search contacts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && fetchPage(1)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
             </div>
           </div>
         </div>
 
         {/* Date Filters */}
-        <div className="flex items-center space-x-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>
           <div>
@@ -205,13 +205,13 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>
           <div className="flex items-end">
             <button
               onClick={() => fetchPage(1)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
             >
               Apply Filters
             </button>
@@ -227,20 +227,20 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
       )}
 
       <div className="overflow-x-auto">
-  <table className="w-full table-auto border border-gray-200">
-    <thead className="bg-gray-50">
-      <tr className="text-left text-sm text-gray-700 border-b">
-        <th className="px-3 py-2">#</th>
-        <th className="px-3 py-2">Name</th>
-        <th className="px-3 py-2">Email</th>
-        <th className="px-3 py-2">Subject</th>
-        <th className="px-3 py-2">Message</th>
-        <th className="px-3 py-2">Status</th>
-        <th className="px-3 py-2">Created</th>
-        <th className="px-3 py-2">Updated</th>
-        <th className="px-3 py-2">Actions</th>
-      </tr>
-    </thead>
+   <table className="w-full table-auto border border-gray-200 text-sm">
+     <thead className="bg-gray-50">
+       <tr className="text-left text-xs sm:text-sm text-gray-700 border-b">
+         <th className="px-2 sm:px-3 py-2">#</th>
+         <th className="px-2 sm:px-3 py-2">Name</th>
+         <th className="px-2 sm:px-3 py-2 hidden sm:table-cell">Email</th>
+         <th className="px-2 sm:px-3 py-2 hidden md:table-cell">Subject</th>
+         <th className="px-2 sm:px-3 py-2 hidden lg:table-cell">Message</th>
+         <th className="px-2 sm:px-3 py-2">Status</th>
+         <th className="px-2 sm:px-3 py-2 hidden md:table-cell">Created</th>
+         <th className="px-2 sm:px-3 py-2 hidden xl:table-cell">Updated</th>
+         <th className="px-2 sm:px-3 py-2">Actions</th>
+       </tr>
+     </thead>
 
     <tbody>
       {contacts.length === 0 && !loading ? (
@@ -256,16 +256,21 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
       ) : (
         contacts.map((c, index) => (
           <tr key={c._id} className="border-t hover:bg-gray-50">
-            <td className="px-3 py-2">{index + 1}</td>
-            <td className="px-3 py-2">{c.name}</td>
-            <td className="px-3 py-2">{c.email}</td>
-            <td className="px-3 py-2 max-w-xs truncate">{c.subject}</td>
-            <td className="px-3 py-2 max-w-sm truncate">{c.message}</td>
-            <td className="px-3 py-2">
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm">{index + 1}</td>
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm">
+              <div>
+                <div className="font-medium">{c.name}</div>
+                <div className="text-gray-500 sm:hidden">{c.email}</div>
+              </div>
+            </td>
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm hidden sm:table-cell">{c.email}</td>
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm hidden md:table-cell max-w-xs truncate">{c.subject}</td>
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm hidden lg:table-cell max-w-sm truncate">{c.message}</td>
+            <td className="px-2 sm:px-3 py-2">
               <select
                 value={backendToUI(c.status)}
                 onChange={(e) => handleStatusChange(c._id, e.target.value as BackendStatus)}
-                className="border rounded px-2 py-1 text-sm"
+                className="border rounded px-1 sm:px-2 py-1 text-xs sm:text-sm w-full sm:w-auto"
               >
                 {STATUS_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -274,34 +279,34 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
                 ))}
               </select>
             </td>
-            <td className="px-3 py-2 text-sm text-gray-500">
-              {new Date(c.createdAt).toLocaleString()}
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm text-gray-500 hidden md:table-cell">
+              {new Date(c.createdAt).toLocaleDateString()}
             </td>
-            <td className="px-3 py-2 text-sm text-gray-500">
-              {c.updatedAt ? new Date(c.updatedAt).toLocaleString() : '--'}
+            <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm text-gray-500 hidden xl:table-cell">
+              {c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '--'}
             </td>
-            <td className="px-3 py-2">
-              <div className="flex items-center space-x-2">
+            <td className="px-2 sm:px-3 py-2">
+              <div className="flex items-center space-x-1">
                 <button
                   onClick={() => startView(c)}
                   title="View"
-                  className="p-2 rounded hover:bg-gray-100"
+                  className="p-1 sm:p-2 rounded hover:bg-gray-100"
                 >
-                  <Eye className="w-4 h-4 text-gray-600" />
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                 </button>
                 <button
                   onClick={() => startEdit(c)}
                   title="Edit"
-                  className="p-2 rounded hover:bg-gray-100"
+                  className="p-1 sm:p-2 rounded hover:bg-gray-100"
                 >
-                  <Edit className="w-4 h-4 text-blue-600" />
+                  <Edit className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
                 </button>
                 <button
                   onClick={() => handleDeleteClick(c)}
                   title="Delete"
-                  className="p-2 rounded hover:bg-gray-100"
+                  className="p-1 sm:p-2 rounded hover:bg-gray-100"
                 >
-                  <Trash2 className="w-4 h-4 text-red-600" />
+                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
                 </button>
               </div>
             </td>
@@ -313,16 +318,16 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
 </div>
 
 
-      <div className="flex items-center justify-between mt-4">
-        <div>
-          <button onClick={() => fetchPage(Math.max(1, page - 1))} className="px-3 py-2 bg-gray-100 rounded mr-2" disabled={page <= 1}>
+      <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-2">
+        <div className="flex items-center space-x-2">
+          <button onClick={() => fetchPage(Math.max(1, page - 1))} className="px-3 py-2 bg-gray-100 rounded text-sm hover:bg-gray-200 transition-colors" disabled={page <= 1}>
             Prev
           </button>
-          <button onClick={() => fetchPage(Math.min(totalPages, page + 1))} className="px-3 py-2 bg-gray-100 rounded" disabled={page >= totalPages}>
+          <button onClick={() => fetchPage(Math.min(totalPages, page + 1))} className="px-3 py-2 bg-gray-100 rounded text-sm hover:bg-gray-200 transition-colors" disabled={page >= totalPages}>
             Next
           </button>
         </div>
-        <div className="text-sm text-gray-600">Page {page} of {totalPages}</div>
+        <div className="text-xs sm:text-sm text-gray-600">Page {page} of {totalPages}</div>
       </div>
 
       {/* View modal */}

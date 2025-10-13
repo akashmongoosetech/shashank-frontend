@@ -75,9 +75,9 @@ export default function SubscriberListTable({ pageSize = 10, className = '' }: P
   };
 
   return (
-    <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Subscribers</h2>
+    <div className={`bg-white rounded-lg shadow p-3 sm:p-4 ${className}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+        <h2 className="text-lg sm:text-xl font-semibold">Subscribers</h2>
         <div className="text-sm text-gray-500">
           {loading ? 'Loading...' : `${subscribers.length} items`}
         </div>
@@ -85,16 +85,16 @@ export default function SubscriberListTable({ pageSize = 10, className = '' }: P
 
       {/* Search */}
       <div className="mb-4">
-        <div className="flex-1 max-w-md">
+        <div className="flex-1 max-w-full sm:max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search subscribers by email..."
+              placeholder="Search subscribers..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && fetchPage(1)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>
         </div>
@@ -108,14 +108,14 @@ export default function SubscriberListTable({ pageSize = 10, className = '' }: P
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border border-gray-200">
+        <table className="w-full table-auto border border-gray-200 text-sm">
           <thead className="bg-gray-50">
-            <tr className="text-left text-sm text-gray-700 border-b">
-              <th className="px-3 py-2">#</th>
-              <th className="px-3 py-2">Email</th>
-              <th className="px-3 py-2">Source</th>
-              <th className="px-3 py-2">Subscribed At</th>
-              <th className="px-3 py-2">Actions</th>
+            <tr className="text-left text-xs sm:text-sm text-gray-700 border-b">
+              <th className="px-2 sm:px-3 py-2">#</th>
+              <th className="px-2 sm:px-3 py-2">Email</th>
+              <th className="px-2 sm:px-3 py-2 hidden sm:table-cell">Source</th>
+              <th className="px-2 sm:px-3 py-2 hidden md:table-cell">Subscribed At</th>
+              <th className="px-2 sm:px-3 py-2">Actions</th>
             </tr>
           </thead>
 
@@ -133,20 +133,25 @@ export default function SubscriberListTable({ pageSize = 10, className = '' }: P
             ) : (
               subscribers.map((s, index) => (
                 <tr key={s._id} className="border-t hover:bg-gray-50">
-                  <td className="px-3 py-2">{index + 1}</td>
-                  <td className="px-3 py-2">{s.email}</td>
-                  <td className="px-3 py-2">{s.source || '--'}</td>
-                  <td className="px-3 py-2 text-sm text-gray-500">
-                    {new Date(s.createdAt).toLocaleString()}
+                  <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm">{index + 1}</td>
+                  <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm">
+                    <div>
+                      <div className="font-medium">{s.email}</div>
+                      <div className="text-gray-500 sm:hidden">{s.source || 'No source'}</div>
+                    </div>
                   </td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center space-x-2">
+                  <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm hidden sm:table-cell">{s.source || '--'}</td>
+                  <td className="px-2 sm:px-3 py-2 text-xs sm:text-sm text-gray-500 hidden md:table-cell">
+                    {new Date(s.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-2 sm:px-3 py-2">
+                    <div className="flex items-center space-x-1">
                       <button
                         onClick={() => startView(s)}
                         title="View"
-                        className="p-2 rounded hover:bg-gray-100"
+                        className="p-1 sm:p-2 rounded hover:bg-gray-100"
                       >
-                        <Eye className="w-4 h-4 text-gray-600" />
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                       </button>
                     </div>
                   </td>
@@ -157,16 +162,16 @@ export default function SubscriberListTable({ pageSize = 10, className = '' }: P
         </table>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
-        <div>
-          <button onClick={() => fetchPage(Math.max(1, page - 1))} className="px-3 py-2 bg-gray-100 rounded mr-2" disabled={page <= 1}>
+      <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-2">
+        <div className="flex items-center space-x-2">
+          <button onClick={() => fetchPage(Math.max(1, page - 1))} className="px-3 py-2 bg-gray-100 rounded text-sm hover:bg-gray-200 transition-colors" disabled={page <= 1}>
             Prev
           </button>
-          <button onClick={() => fetchPage(Math.min(totalPages, page + 1))} className="px-3 py-2 bg-gray-100 rounded" disabled={page >= totalPages}>
+          <button onClick={() => fetchPage(Math.min(totalPages, page + 1))} className="px-3 py-2 bg-gray-100 rounded text-sm hover:bg-gray-200 transition-colors" disabled={page >= totalPages}>
             Next
           </button>
         </div>
-        <div className="text-sm text-gray-600">Page {page} of {totalPages}</div>
+        <div className="text-xs sm:text-sm text-gray-600">Page {page} of {totalPages}</div>
       </div>
 
       {/* View modal */}

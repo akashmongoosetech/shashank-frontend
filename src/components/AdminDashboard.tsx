@@ -299,199 +299,201 @@ export default function AdminDashboard() {
               </div>
             )}
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-8 gap-6 mb-8">
-              {/* Stats Cards */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Users className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Contacts</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : contactStats.total}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+  {/* Stats Cards */}
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-blue-100 rounded-lg">
+        <Users className="w-6 h-6 text-blue-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Total Contacts</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : contactStats.total}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Calendar className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Appointments</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : appointmentStats.total}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.1 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-green-100 rounded-lg">
+        <Calendar className="w-6 h-6 text-green-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Total Appointments</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : appointmentStats.total}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-yellow-100 rounded-lg">
-                    <Calendar className="w-6 h-6 text-yellow-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Pending Appointments</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : appointmentStats.pending}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.2 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-yellow-100 rounded-lg">
+        <Calendar className="w-6 h-6 text-yellow-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Pending Appointments</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : appointmentStats.pending}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <BarChart3 className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">New Contacts</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : contactStats.new}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.3 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-purple-100 rounded-lg">
+        <BarChart3 className="w-6 h-6 text-purple-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">New Contacts</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : contactStats.new}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
-                    <Users className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Recent Contacts</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : monthlyStats.contactsThisMonth}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+  {/* Next row */}
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.4 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-indigo-100 rounded-lg">
+        <Users className="w-6 h-6 text-indigo-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Recent Contacts</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : monthlyStats.contactsThisMonth}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.5 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-teal-100 rounded-lg">
-                    <Calendar className="w-6 h-6 text-teal-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Bookings This Month</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : monthlyStats.appointmentsThisMonth}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.5 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-teal-100 rounded-lg">
+        <Calendar className="w-6 h-6 text-teal-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Bookings This Month</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : monthlyStats.appointmentsThisMonth}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.6 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-pink-100 rounded-lg">
-                    <Users className="w-6 h-6 text-pink-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Feedback</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : feedbackStats.total}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.6 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-pink-100 rounded-lg">
+        <Users className="w-6 h-6 text-pink-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Total Feedback</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : feedbackStats.total}
+        </p>
+      </div>
+    </div>
+  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.7 }}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <BarChart3 className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Avg Rating</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '...' : `${feedbackStats.averageRating}/5`}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay: 0.7 }}
+    className="bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+  >
+    <div className="flex items-center">
+      <div className="p-2 bg-orange-100 rounded-lg">
+        <BarChart3 className="w-6 h-6 text-orange-600" />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-gray-600">Avg Rating</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {loading ? '...' : `${feedbackStats.averageRating}/5`}
+        </p>
+      </div>
+    </div>
+  </motion.div>
+</div>
+
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <button
                   onClick={() => setActiveTab('contacts')}
-                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                  className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
                 >
-                  <Users className="w-8 h-8 text-blue-600 mb-2" />
-                  <h4 className="font-medium text-gray-900">Manage Contacts</h4>
-                  <p className="text-sm text-gray-600">View and manage contact submissions</p>
+                  <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mb-2" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Manage Contacts</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">View and manage contact submissions</p>
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab('appointments')}
-                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                  className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
                 >
-                  <Calendar className="w-8 h-8 text-green-600 mb-2" />
-                  <h4 className="font-medium text-gray-900">Manage Appointments</h4>
-                  <p className="text-sm text-gray-600">View and manage appointment bookings</p>
+                  <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 mb-2" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Manage Appointments</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">View and manage appointment bookings</p>
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab('feedback')}
-                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                  className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
                 >
-                  <MessageSquare className="w-8 h-8 text-pink-600 mb-2" />
-                  <h4 className="font-medium text-gray-900">Manage Feedback</h4>
-                  <p className="text-sm text-gray-600">View and moderate testimonials</p>
+                  <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-pink-600 mb-2" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Manage Feedback</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">View and moderate testimonials</p>
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                  className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
                 >
-                  <Settings className="w-8 h-8 text-purple-600 mb-2" />
-                  <h4 className="font-medium text-gray-900">Settings</h4>
-                  <p className="text-sm text-gray-600">Configure system settings</p>
+                  <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 mb-2" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Settings</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">Configure system settings</p>
                 </button>
               </div>
             </div>
@@ -499,30 +501,30 @@ export default function AdminDashboard() {
         );
       case 'settings':
         return (
-          <div className="mt-6">
-            <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <div className="mt-4 sm:mt-6">
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">System Settings</h3>
-              <div className="space-y-4">
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-2">Email Configuration</h4>
-                  <p className="text-sm text-gray-600">Configure email settings for notifications</p>
-                  <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 sm:p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Email Configuration</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">Configure email settings for notifications</p>
+                  <button className="mt-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
                     Configure
                   </button>
                 </div>
-                
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-2">Appointment Settings</h4>
-                  <p className="text-sm text-gray-600">Manage appointment time slots and treatments</p>
-                  <button className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+
+                <div className="p-3 sm:p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Appointment Settings</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">Manage appointment time slots and treatments</p>
+                  <button className="mt-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
                     Manage
                   </button>
                 </div>
-                
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-2">System Information</h4>
-                  <p className="text-sm text-gray-600">View system status and version information</p>
-                  <button className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+
+                <div className="p-3 sm:p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">System Information</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">View system status and version information</p>
+                  <button className="mt-2 px-3 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm">
                     View Info
                   </button>
                 </div>
@@ -574,21 +576,22 @@ export default function AdminDashboard() {
       {/* Navigation Tabs */}
       <div className="bg-white border-b border-gray-200 mt-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8">
+          <nav className="flex flex-wrap space-x-2 sm:space-x-8 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as AdminTab)}
-                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  className={`flex items-center space-x-1 sm:space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                 </button>
               );
             })}
@@ -597,7 +600,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6">
         {renderTabContent()}
       </div>
     </div>

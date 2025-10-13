@@ -379,16 +379,16 @@ export default function FeedbackListTable({ className = '' }: FeedbackListTableP
   return (
     <div className={`bg-white rounded-lg shadow-lg border border-gray-200 ${className}`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Feedback Management</h2>
+      <div className="p-4 sm:p-6 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Feedback Management</h2>
           <div className="text-sm text-gray-600">
             Total: {feedbacks.length} feedback(s)
           </div>
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -465,25 +465,25 @@ export default function FeedbackListTable({ className = '' }: FeedbackListTableP
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Customer
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                 Rating & Treatment
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                 Feedback
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                 Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -514,45 +514,49 @@ export default function FeedbackListTable({ className = '' }: FeedbackListTableP
                   className="hover:bg-gray-50"
                 >
                   {/* Customer Info */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <img
                         src={feedback.image || 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'}
                         alt={feedback.name}
-                        className="w-10 h-10 rounded-full object-cover mr-3"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover mr-2 sm:mr-3"
                       />
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{feedback.name}</div>
-                        <div className="text-sm text-gray-500">{feedback.email}</div>
+                        <div className="text-xs sm:text-sm font-medium text-gray-900">{feedback.name}</div>
+                        <div className="text-xs sm:text-sm text-gray-500">{feedback.email}</div>
+                        <div className="flex items-center sm:hidden mt-1">
+                          {renderStars(feedback.rating)}
+                          <span className="ml-1 text-xs text-gray-600">({feedback.rating})</span>
+                        </div>
                       </div>
                     </div>
                   </td>
 
                   {/* Rating & Treatment */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                     <div className="space-y-1">
                       <div className="flex items-center">
                         {renderStars(feedback.rating)}
-                        <span className="ml-2 text-sm text-gray-600">({feedback.rating})</span>
+                        <span className="ml-2 text-xs sm:text-sm text-gray-600">({feedback.rating})</span>
                       </div>
-                      <div className="text-sm text-gray-600">{feedback.treatment}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">{feedback.treatment}</div>
                     </div>
                   </td>
 
                   {/* Feedback Preview */}
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 max-w-xs">
-                      {feedback.review.length > 100 
-                        ? `${feedback.review.substring(0, 100)}...` 
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 hidden md:table-cell">
+                    <div className="text-xs sm:text-sm text-gray-900 max-w-xs">
+                      {feedback.review.length > 100
+                        ? `${feedback.review.substring(0, 100)}...`
                         : feedback.review
                       }
                     </div>
                   </td>
 
                   {/* Status */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
                     <div className="space-y-1">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      <span className={`inline-flex px-1 sm:px-2 py-1 text-xs font-semibold rounded-full ${
                         feedback.status === 'approved' ? 'bg-green-100 text-green-800' :
                         feedback.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-red-100 text-red-800'
@@ -561,7 +565,7 @@ export default function FeedbackListTable({ className = '' }: FeedbackListTableP
                       </span>
                       {feedback.featured && (
                         <div>
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full">
+                          <span className="inline-flex px-1 sm:px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full">
                             <Award className="w-3 h-3 mr-1" />
                             Featured
                           </span>
@@ -571,40 +575,40 @@ export default function FeedbackListTable({ className = '' }: FeedbackListTableP
                   </td>
 
                   {/* Date */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden lg:table-cell">
                     {new Date(feedback.createdAt).toLocaleDateString()}
                   </td>
 
                   {/* Actions */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center space-x-2">
+                  <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div className="flex items-center space-x-1">
                       <button
                         onClick={() => setViewFeedback(feedback)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 hover:text-blue-800 p-1"
                         title="View Details"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => setEditFeedback(feedback)}
-                        className="text-green-600 hover:text-green-800"
+                        className="text-green-600 hover:text-green-800 p-1"
                         title="Edit Feedback"
                       >
-                        <Edit3 className="w-4 h-4" />
+                        <Edit3 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => handleToggleFeatured(feedback)}
-                        className={`${feedback.featured ? 'text-purple-600 hover:text-purple-800' : 'text-gray-400 hover:text-purple-600'}`}
+                        className={`${feedback.featured ? 'text-purple-600 hover:text-purple-800' : 'text-gray-400 hover:text-purple-600'} p-1`}
                         title={feedback.featured ? 'Remove from Featured' : 'Mark as Featured'}
                       >
-                        <Award className="w-4 h-4" />
+                        <Award className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(feedback)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 p-1"
                         title="Delete Feedback"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>
@@ -617,24 +621,24 @@ export default function FeedbackListTable({ className = '' }: FeedbackListTableP
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-700">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="text-xs sm:text-sm text-gray-700">
             Page {page} of {totalPages}
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-1 sm:space-x-2">
             <button
               onClick={() => fetchPage(page - 1)}
               disabled={page === 1}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-2 sm:px-3 py-1 border border-gray-300 rounded-lg text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={() => fetchPage(page + 1)}
               disabled={page === totalPages}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-2 sm:px-3 py-1 border border-gray-300 rounded-lg text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
