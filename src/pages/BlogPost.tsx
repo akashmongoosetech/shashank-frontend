@@ -2,14 +2,16 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { Calendar, User, ArrowLeft } from "lucide-react";
-import { getBlogBySlug, type Blog } from "../services/apiService";
+import { Calendar, User, ArrowLeft, Clock } from "lucide-react";
+import { getBlogBySlug, getBlogs, type Blog } from "../services/apiService";
 
 export default function BlogPost() {
-  const { slug } = useParams();
-  const [post, setPost] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+   const { slug } = useParams();
+   const [post, setPost] = useState<Blog | null>(null);
+   const [loading, setLoading] = useState<boolean>(true);
+   const [error, setError] = useState<string | null>(null);
+   const [relatedBlogs, setRelatedBlogs] = useState<Blog[]>([]);
+   const [relatedLoading, setRelatedLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -18,11 +20,29 @@ export default function BlogPost() {
         const res = await getBlogBySlug(slug);
         if (res.success && res.data) {
           setPost(res.data);
+          // Fetch related blogs based on category
+          if (res.data.category) {
+            setRelatedLoading(true);
+            const relatedRes = await getBlogs({
+              category: res.data.category,
+              limit: 3,
+              status: 'published'
+            });
+            if (relatedRes.success && relatedRes.data) {
+              // Filter out current blog and limit to 3
+              const filtered = relatedRes.data.blogs
+                .filter(blog => blog._id !== res.data!._id)
+                .slice(0, 3);
+              setRelatedBlogs(filtered);
+            }
+            setRelatedLoading(false);
+          }
         } else {
           setError(res.message || "Blog not found");
         }
-      } catch (e: any) {
-        setError(e?.message || "Failed to load blog");
+      } catch (e: unknown) {
+        const error = e as Error;
+        setError(error?.message || "Failed to load blog");
       } finally {
         setLoading(false);
       }
@@ -55,7 +75,7 @@ export default function BlogPost() {
   const metaTags =
     post.metaTags?.map((tag) => {
       const parts = tag.split(",");
-      const attrs: any = {};
+      const attrs: Record<string, string> = {};
       parts.forEach((part) => {
         const [key, value] = part.split("=");
         if (key && value) attrs[key.trim()] = value.trim();
@@ -228,6 +248,89 @@ export default function BlogPost() {
           </div>
         </div>
       </section>
+
+      {/* Related Blogs Section */}
+      {relatedBlogs.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                More Articles You May Like
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Discover more insights and tips related to {post.category || 'skin care'}
+              </p>
+            </motion.div>
+
+            {relatedLoading ? (
+              <div className="flex justify-center">
+                <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {relatedBlogs.map((blog, index) => (
+                  <motion.article
+                    key={blog._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group"
+                  >
+                    <Link to={`/blog/${blog.slug}`} className="block">
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={blog.image || (blog.sections && blog.sections[0]?.image) || ""}
+                          alt={blog.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                      </div>
+                      <div className="p-6 space-y-4">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <div className="flex items-center space-x-1">
+                            <Calendar className="w-4 h-4" />
+                            <span>
+                              {new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </span>
+                          </div>
+                          {blog.readTime && (
+                            <div className="flex items-center space-x-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{blog.readTime}</span>
+                            </div>
+                          )}
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
+                          {blog.title}
+                        </h3>
+                        <p className="text-gray-600 line-clamp-3">
+                          {blog.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-sm text-gray-500">
+                            By {blog.author || 'Clinic Team'}
+                          </span>
+                          <span className="text-blue-600 group-hover:text-blue-700 font-medium text-sm transition-colors duration-200">
+                            Read More →
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.article>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

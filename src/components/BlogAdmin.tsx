@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Save, X, RefreshCw, FileText, Eye, EyeOff, Tag, Search, Calendar, User, Image as ImageIcon, Clock, Globe } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, RefreshCw, FileText, Eye, Tag, Calendar, User, Image as ImageIcon, Clock, Globe } from 'lucide-react';
 import { createBlog, getBlogs, updateBlog, deleteBlog, type BlogFormData, type Blog } from '../services/apiService';
 
 export default function BlogAdmin() {
@@ -91,6 +91,7 @@ export default function BlogAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleSubmit called');
     setLoading(true);
     setMessage(null);
     setError(null);
@@ -107,43 +108,62 @@ export default function BlogAdmin() {
         seoKeywords: form.seoKeywords && form.seoKeywords.length ? form.seoKeywords : undefined,
         metaTags: form.metaTags && form.metaTags.length ? form.metaTags : undefined,
       };
+      console.log('Payload constructed:', payload);
+
       // Basic client validation to mirror backend
       if (!payload.title || payload.title.trim().length < 3) {
+        console.log('Validation failed: Title too short');
         setError('Title must be at least 3 characters');
         return setLoading(false);
       }
       if (!payload.slug || !/^[a-z0-9-]+$/.test(payload.slug)) {
+        console.log('Validation failed: Invalid slug');
         setError('Slug must use lowercase letters, numbers, and hyphens only');
         return setLoading(false);
       }
       if (!payload.excerpt || payload.excerpt.trim().length < 10) {
+        console.log('Validation failed: Excerpt too short');
         setError('Excerpt must be at least 10 characters');
         return setLoading(false);
       }
       if (!payload.content || payload.content.trim().length < 10) {
+        console.log('Validation failed: Content too short');
         setError('Content must be at least 10 characters');
         return setLoading(false);
       }
+      console.log('Client validation passed');
 
       let res;
       if (editingBlog) {
+        console.log('Calling updateBlog with ID:', editingBlog._id);
         res = await updateBlog(editingBlog._id, payload);
       } else {
+        console.log('Calling createBlog');
         res = await createBlog(payload);
       }
+      console.log('API response:', res);
 
       if (res.success) {
+        console.log('Save successful');
         setMessage(editingBlog ? 'Blog updated successfully' : 'Blog created successfully');
         resetForm();
         fetchBlogs(); // Refresh the list
       } else {
+        console.log('Save failed with response:', res);
         setError(res.message || `Failed to ${editingBlog ? 'update' : 'create'} blog`);
-        const errs = (res as any)?.errors as Array<{ msg?: string; path?: string }> | undefined;
+        const errs = (res as { errors?: Array<{ msg?: string; path?: string }> })?.errors;
         setFieldErrors(errs || []);
       }
-    } catch (err: any) {
-      setError(err?.payload?.message || err?.message || `Failed to ${editingBlog ? 'update' : 'create'} blog`);
-      const errs = err?.payload?.errors as Array<{ msg?: string; path?: string }> | undefined;
+    } catch (err: unknown) {
+      const error = err as Error & { status?: number; payload?: { message?: string; errors?: Array<{ msg?: string; path?: string }> } };
+      console.log('Exception caught:', error);
+      console.log('Error details:', {
+        message: error?.message,
+        status: error?.status,
+        payload: error?.payload
+      });
+      setError(error?.payload?.message || error?.message || `Failed to ${editingBlog ? 'update' : 'create'} blog`);
+      const errs = error?.payload?.errors as Array<{ msg?: string; path?: string }> | undefined;
       setFieldErrors(errs || []);
     } finally {
       setLoading(false);
@@ -170,7 +190,7 @@ export default function BlogAdmin() {
       if (res.success && res.data) {
         setBlogs(res.data.blogs);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch blogs:', err);
     } finally {
       setBlogsLoading(false);
@@ -211,8 +231,9 @@ export default function BlogAdmin() {
       } else {
         setError(res.message || 'Failed to delete blog');
       }
-    } catch (err: any) {
-      setError(err?.payload?.message || err?.message || 'Failed to delete blog');
+    } catch (err: unknown) {
+      const error = err as Error & { payload?: { message?: string } };
+      setError(error?.payload?.message || error?.message || 'Failed to delete blog');
     } finally {
       setDeleteLoading(null);
     }
@@ -356,6 +377,7 @@ export default function BlogAdmin() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
+                    
                     <label className="block text-sm font-semibold text-gray-700 flex items-center space-x-2">
                       <span>Title</span>
                       <span className="text-red-500">*</span>
@@ -712,7 +734,7 @@ export default function BlogAdmin() {
                         name="status"
                         value="published"
                         checked={form.status === 'published'}
-                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as any }))}
+                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as 'draft' | 'published' }))}
                         className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-sm font-medium text-gray-700">Published</span>
@@ -723,7 +745,7 @@ export default function BlogAdmin() {
                         name="status"
                         value="draft"
                         checked={form.status === 'draft'}
-                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as any }))}
+                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as 'draft' | 'published' }))}
                         className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-sm font-medium text-gray-700">Draft</span>

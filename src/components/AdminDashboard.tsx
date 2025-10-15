@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw, Mail, MessageSquare } from 'lucide-react';
 import ContactListTable from './ContactListTable';
 import AppointmentListTable from './AppointmentListTable';
 import SubscriberListTable from './SubscriberListTable';
 import FeedbackListTable from './FeedbackListTable';
-import { getContactStats, getAppointmentStats, getContacts, getAppointments, getFeedbackStats } from '../services/apiService';
+import { getContactStats, getAppointmentStats, getContacts, getAppointments, getFeedbackStats, Contact, Appointment } from '../services/apiService';
 
 type AdminTab = 'overview' | 'contacts' | 'appointments' | 'subscribers' | 'feedback' | 'settings';
 
@@ -70,11 +70,11 @@ export default function AdminDashboard() {
   };
 
   // Function to fetch monthly statistics
-  const fetchMonthlyStats = async () => {
+  const fetchMonthlyStats = useCallback(async () => {
     try {
       const { start, end } = getCurrentMonthRange();
       const { start: last30Start, end: last30End } = getLast30DaysRange();
-      
+
       const [contactsResponse, appointmentsResponse] = await Promise.all([
         getContacts({ page: 1, limit: 100 }), // Get all contacts to filter by date
         getAppointments({ page: 1, limit: 100 }) // Get all appointments to filter by date
@@ -86,9 +86,9 @@ export default function AdminDashboard() {
       if (contactsResponse.success && contactsResponse.data?.contacts) {
         const contacts = contactsResponse.data.contacts;
         console.log(`📞 Total contacts found: ${contacts.length}`);
-        
+
         // Try current month first
-        contactsThisMonth = contacts.filter((contact: any) => {
+        contactsThisMonth = contacts.filter((contact: Contact) => {
           const contactDate = new Date(contact.createdAt);
           const isThisMonth = contactDate >= new Date(start) && contactDate <= new Date(end);
           return isThisMonth;
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
 
         // If no contacts this month, try last 30 days
         if (contactsThisMonth === 0) {
-          contactsThisMonth = contacts.filter((contact: any) => {
+          contactsThisMonth = contacts.filter((contact: Contact) => {
             const contactDate = new Date(contact.createdAt);
             const isLast30Days = contactDate >= new Date(last30Start) && contactDate <= new Date(last30End);
             return isLast30Days;
@@ -107,9 +107,9 @@ export default function AdminDashboard() {
       if (appointmentsResponse.success && appointmentsResponse.data?.appointments) {
         const appointments = appointmentsResponse.data.appointments;
         console.log(`📅 Total appointments found: ${appointments.length}`);
-        
+
         // Try current month first
-        appointmentsThisMonth = appointments.filter((appointment: any) => {
+        appointmentsThisMonth = appointments.filter((appointment: Appointment) => {
           const appointmentDate = new Date(appointment.createdAt);
           const isThisMonth = appointmentDate >= new Date(start) && appointmentDate <= new Date(end);
           return isThisMonth;
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
 
         // If no appointments this month, try last 30 days
         if (appointmentsThisMonth === 0) {
-          appointmentsThisMonth = appointments.filter((appointment: any) => {
+          appointmentsThisMonth = appointments.filter((appointment: Appointment) => {
             const appointmentDate = new Date(appointment.createdAt);
             const isLast30Days = appointmentDate >= new Date(last30Start) && appointmentDate <= new Date(last30End);
             return isLast30Days;
@@ -134,7 +134,7 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error('Failed to fetch monthly statistics:', err);
     }
-  };
+  }, []);
 
   // Fetch statistics when component mounts
   useEffect(() => {
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const [contactResponse, appointmentResponse, feedbackResponse] = await Promise.all([
           getContactStats(),
           getAppointmentStats(),
@@ -163,17 +163,52 @@ export default function AdminDashboard() {
 
         // Fetch monthly statistics
         await fetchMonthlyStats();
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to fetch statistics:', err);
-        
-      setError('Failed to load statistics. Please try again.');
+
+        setError('Failed to load statistics. Please try again.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
-  }, []);
+  }, [fetchMonthlyStats]);
+
+  // Function to refresh statistics
+  const refreshStats = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [contactResponse, appointmentResponse, feedbackResponse] = await Promise.all([
+        getContactStats(),
+        getAppointmentStats(),
+        getFeedbackStats()
+      ]);
+
+      if (contactResponse.success && contactResponse.data) {
+        setContactStats(contactResponse.data);
+      }
+
+      if (appointmentResponse.success && appointmentResponse.data) {
+        setAppointmentStats(appointmentResponse.data);
+      }
+
+      if (feedbackResponse.success && feedbackResponse.data) {
+        setFeedbackStats(feedbackResponse.data);
+      }
+
+      // Fetch monthly statistics
+      await fetchMonthlyStats();
+    } catch (err) {
+      console.error('Failed to refresh statistics:', err);
+
+      setError('Failed to refresh statistics. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchMonthlyStats]);
 
   // Refresh statistics when switching to overview tab
   useEffect(() => {
@@ -228,42 +263,7 @@ export default function AdminDashboard() {
       window.removeEventListener('appointmentUpdated', handleAppointmentUpdate);
       window.removeEventListener('contactUpdated', handleContactUpdate);
     };
-  }, [activeTab]);
-
-  // Function to refresh statistics
-  const refreshStats = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const [contactResponse, appointmentResponse, feedbackResponse] = await Promise.all([
-        getContactStats(),
-        getAppointmentStats(),
-        getFeedbackStats()
-      ]);
-
-      if (contactResponse.success && contactResponse.data) {
-        setContactStats(contactResponse.data);
-      }
-
-      if (appointmentResponse.success && appointmentResponse.data) {
-        setAppointmentStats(appointmentResponse.data);
-      }
-
-      if (feedbackResponse.success && feedbackResponse.data) {
-        setFeedbackStats(feedbackResponse.data);
-      }
-
-      // Fetch monthly statistics
-      await fetchMonthlyStats();
-    } catch (err: any) {
-      console.error('Failed to refresh statistics:', err);
-      
-      setError('Failed to refresh statistics. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [activeTab, refreshStats]);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },

@@ -11,13 +11,10 @@ import {
   Filter, 
   ChevronLeft, 
   ChevronRight,
-  Edit,
   Trash2,
   CheckCircle,
   XCircle,
-  AlertCircle,
-  Eye,
-  MoreHorizontal
+  Eye
 } from 'lucide-react';
 import {
   getAppointments,
@@ -77,9 +74,12 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name' | 'status'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [editingId, setEditingId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [editingData, setEditingData] = useState<AppointmentUpdateData>({});
   const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
+
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -107,7 +107,7 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
   const fetchPage = async (p: number) => {
     setLoading(true);
     try {
-      const params: any = {
+      const params: Record<string, string | number> = {
         page: p,
         limit,
         sortBy,
@@ -125,7 +125,10 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
       console.log('API Response:', resp);
 
       if (resp.success && resp.data) {
-        const apiData = resp.data as unknown as { appointments: Appointment[]; pagination: any };
+        const apiData = resp.data as unknown as {
+          appointments: Appointment[];
+          pagination: { currentPage: number; totalPages: number }
+        };
         setAppointments(apiData.appointments ?? []);
         setPage(apiData.pagination?.currentPage ?? p);
         setTotalPages(apiData.pagination?.totalPages ?? 1);
@@ -227,16 +230,7 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
     return timeString;
   };
 
-  const getStatusIcon = (status: BackendStatus) => {
-    switch (status) {
-      case 'pending': return <AlertCircle className="w-4 h-4" />;
-      case 'confirmed': return <CheckCircle className="w-4 h-4" />;
-      case 'cancelled': return <XCircle className="w-4 h-4" />;
-      case 'completed': return <CheckCircle className="w-4 h-4" />;
-      case 'no-show': return <XCircle className="w-4 h-4" />;
-      default: return <AlertCircle className="w-4 h-4" />;
-    }
-  };
+  // Removed unused getStatusIcon function
 
   const clearFilters = () => {
     setSearchTerm('');

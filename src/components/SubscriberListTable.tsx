@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Eye, Trash2, Search } from 'lucide-react';
+import { Eye, Search } from 'lucide-react';
 import { getSubscribers } from '../services/apiService';
 import type { Subscriber } from '../services/apiService';
 
@@ -40,7 +40,7 @@ export default function SubscriberListTable({ pageSize = 10, className = '' }: P
   const fetchPage = async (p = 1) => {
     setLoading(true);
     try {
-      const params: any = { page: p, limit: pageSize };
+      const params: { page: number; limit: number; search?: string } = { page: p, limit: pageSize };
       if (searchTerm) params.search = searchTerm;
 
       const resp = await getSubscribers(params);
