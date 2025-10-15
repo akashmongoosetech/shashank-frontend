@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw, Mail, MessageSquare } from 'lucide-react';
+import { Users, Calendar, BarChart3, Settings, ArrowLeft, RefreshCw, Mail, MessageSquare, Camera } from 'lucide-react';
 import ContactListTable from './ContactListTable';
 import AppointmentListTable from './AppointmentListTable';
 import SubscriberListTable from './SubscriberListTable';
 import FeedbackListTable from './FeedbackListTable';
+import GalleryListTable from './GalleryListTable';
 import { getContactStats, getAppointmentStats, getContacts, getAppointments, getFeedbackStats, Contact, Appointment } from '../services/apiService';
 
-type AdminTab = 'overview' | 'contacts' | 'appointments' | 'subscribers' | 'feedback' | 'settings';
+type AdminTab = 'overview' | 'contacts' | 'appointments' | 'subscribers' | 'feedback' | 'gallery' | 'settings';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -271,6 +272,7 @@ export default function AdminDashboard() {
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'subscribers', label: 'Subscribers', icon: Mail },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
+    { id: 'gallery', label: 'Gallery', icon: Camera },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -284,6 +286,8 @@ export default function AdminDashboard() {
         return <SubscriberListTable className="mt-6" />;
       case 'feedback':
         return <FeedbackListTable className="mt-6" />;
+      case 'gallery':
+        return <GalleryListTable className="mt-6" />;
       case 'overview':
         return (
           <div className="mt-6">
@@ -485,6 +489,15 @@ export default function AdminDashboard() {
                   <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-pink-600 mb-2" />
                   <h4 className="font-medium text-gray-900 text-sm sm:text-base">Manage Feedback</h4>
                   <p className="text-xs sm:text-sm text-gray-600">View and moderate testimonials</p>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('gallery')}
+                  className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                >
+                  <Camera className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 mb-2" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Manage Gallery</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">Manage before & after images</p>
                 </button>
 
                 <button

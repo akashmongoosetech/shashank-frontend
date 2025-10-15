@@ -23,6 +23,7 @@ export interface PaginatedResponse<T> {
   appointments?: T[];
   subscribers?: T[];
   feedback?: T[];
+  galleryItems?: T[];
   pagination: PaginationInfo;
 }
 
@@ -236,6 +237,49 @@ export interface FeedbackStats {
   featured: number;
   averageRating: number;
   ratingDistribution: { [key: number]: number };
+}
+
+// Gallery Types
+export interface GalleryItem {
+  _id: string;
+  title: string;
+  description: string;
+  category: 'before-after' | 'clinic';
+  beforeUrl?: string;
+  afterUrl?: string;
+  url?: string;
+  status: 'active' | 'inactive';
+  order: number;
+  tags: string[];
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GalleryFormData {
+  title: string;
+  description: string;
+  category: 'before-after' | 'clinic';
+  beforeUrl?: string;
+  afterUrl?: string;
+  url?: string;
+  status?: 'active' | 'inactive';
+  order?: number;
+  tags?: string[];
+  adminNotes?: string;
+}
+
+export interface GalleryUpdateData {
+  title?: string;
+  description?: string;
+  category?: 'before-after' | 'clinic';
+  beforeUrl?: string;
+  afterUrl?: string;
+  url?: string;
+  status?: 'active' | 'inactive';
+  order?: number;
+  tags?: string[];
+  adminNotes?: string;
 }
 
 // API Service Class
@@ -552,6 +596,57 @@ class ApiService {
       method: 'POST',
     });
   }
+
+  // Gallery API Methods
+  async createGalleryItem(data: GalleryFormData): Promise<ApiResponse<GalleryItem>> {
+    return this.request<GalleryItem>('/api/gallery', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getGalleryItems(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    category?: string;
+    search?: string;
+    sort?: string;
+  }): Promise<ApiResponse<{ galleryItems: GalleryItem[]; pagination: PaginationInfo }>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const queryString = searchParams.toString();
+    const endpoint = queryString ? `/api/gallery?${queryString}` : '/api/gallery';
+    return this.request<{ galleryItems: GalleryItem[]; pagination: PaginationInfo }>(endpoint);
+  }
+
+  async getGalleryItem(id: string): Promise<ApiResponse<GalleryItem>> {
+    return this.request<GalleryItem>(`/api/gallery/${id}`);
+  }
+
+  async updateGalleryItem(id: string, data: GalleryUpdateData): Promise<ApiResponse<GalleryItem>> {
+    return this.request<GalleryItem>(`/api/gallery/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteGalleryItem(id: string): Promise<ApiResponse<void>> {
+    return this.request<void>(`/api/gallery/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async updateGalleryItemOrder(id: string, order: number): Promise<ApiResponse<GalleryItem>> {
+    return this.request<GalleryItem>(`/api/gallery/${id}/order`, {
+      method: 'PUT',
+      body: JSON.stringify({ order }),
+    });
+  }
 }
 
 // Export singleton instance
@@ -632,3 +727,18 @@ export const getFeaturedFeedback = (limit?: number) => apiService.getFeaturedFee
 export const getFeedbackStats = () => apiService.getFeedbackStats();
 export const approveFeedback = (id: string) => apiService.approveFeedback(id);
 export const toggleFeedbackFeatured = (id: string) => apiService.toggleFeedbackFeatured(id);
+
+// Gallery exports
+export const createGalleryItem = (data: GalleryFormData) => apiService.createGalleryItem(data);
+export const getGalleryItems = (params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  category?: string;
+  search?: string;
+  sort?: string;
+}) => apiService.getGalleryItems(params);
+export const getGalleryItem = (id: string) => apiService.getGalleryItem(id);
+export const updateGalleryItem = (id: string, data: GalleryUpdateData) => apiService.updateGalleryItem(id, data);
+export const deleteGalleryItem = (id: string) => apiService.deleteGalleryItem(id);
+export const updateGalleryItemOrder = (id: string, order: number) => apiService.updateGalleryItemOrder(id, order);

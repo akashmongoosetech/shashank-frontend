@@ -1,86 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Camera, Image, Award } from 'lucide-react';
 import PageBanner from '../components/PageBanner';
+import { getGalleryItems, GalleryItem } from '../services/apiService';
 
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [galleryImages, setGalleryImages] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const galleryImages = [
-    {
-      url: 'https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Acne Treatment Results',
-      description: 'Complete transformation after 3 months of treatment',
-    },
-    {
-      url: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Skin Rejuvenation',
-      description: 'Anti-aging treatment results after 6 weeks',
-    },
-    {
-      url: 'https://images.pexels.com/photos/3997379/pexels-photo-3997379.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Laser Treatment Results',
-      description: 'Chemical peel and laser resurfacing combination',
-    },
-    {
-      url: 'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Hair Restoration',
-      description: 'FUE hair transplant results after 12 months',
-    },
-    {
-      url: 'https://images.pexels.com/photos/4173239/pexels-photo-4173239.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'clinic',
-      title: 'Reception Area',
-      description: 'Modern and welcoming clinic entrance',
-    },
-    {
-      url: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'clinic',
-      title: 'Treatment Room',
-      description: 'State-of-the-art treatment facilities',
-    },
-    {
-      url: 'https://images.pexels.com/photos/4386464/pexels-photo-4386464.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'clinic',
-      title: 'Consultation Room',
-      description: 'Private consultation space for patient comfort',
-    },
-    {
-      url: 'https://images.pexels.com/photos/3985319/pexels-photo-3985319.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Anti-Aging Treatment',
-      description: 'Botox and filler results after 2 weeks',
-    },
-    {
-      url: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'clinic',
-      title: 'State-of-the-art Equipment',
-      description: 'Advanced laser and treatment technology',
-    },
-    {
-      url: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'PRP Hair Therapy Results',
-      description: 'Hair density improvement after 6 months',
-    },
-    {
-      url: 'https://images.pexels.com/photos/4046708/pexels-photo-4046708.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Clear Skin Transformation',
-      description: 'Complete acne clearance and scar reduction',
-    },
-    {
-      url: 'https://images.pexels.com/photos/3785706/pexels-photo-3785706.jpeg?auto=compress&cs=tinysrgb&w=800',
-      category: 'before-after',
-      title: 'Pigmentation Treatment',
-      description: 'Melasma treatment results after 8 weeks',
-    },
-  ];
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await getGalleryItems({
+          status: 'active',
+          sort: 'order'
+        });
+
+        if (response.success && response.data) {
+          setGalleryImages(response.data.galleryItems || []);
+        } else {
+          setError('Failed to load gallery images');
+        }
+      } catch (err) {
+        console.error('Error fetching gallery images:', err);
+        setError('Failed to load gallery images');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryImages();
+  }, []);
+
 
   const categories = [
     { id: 'all', label: 'All Photos', icon: Image },
@@ -91,6 +47,51 @@ export default function Gallery() {
   const filteredImages = activeCategory === 'all'
     ? galleryImages
     : galleryImages.filter(img => img.category === activeCategory);
+
+  if (loading) {
+    return (
+      <div>
+        <PageBanner
+          title="Our Gallery"
+          subtitle="Discover the transformations and experience the excellence of our clinic"
+          gradient="from-blue-600 to-blue-800"
+          breadcrumbs={[
+            { label: 'Home', path: '/' },
+            { label: 'Gallery' },
+          ]}
+        />
+        <div className="py-16 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Loading gallery...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <PageBanner
+          title="Our Gallery"
+          subtitle="Discover the transformations and experience the excellence of our clinic"
+          gradient="from-blue-600 to-blue-800"
+          breadcrumbs={[
+            { label: 'Home', path: '/' },
+            { label: 'Gallery' },
+          ]}
+        />
+        <div className="py-16 text-center">
+          <p className="text-red-600">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handlePrevious = () => {
     if (selectedImage !== null && selectedImage > 0) {
@@ -191,11 +192,26 @@ export default function Gallery() {
                   className="group relative aspect-square overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl cursor-pointer transform hover:-translate-y-2 transition-all duration-300"
                   onClick={() => setSelectedImage(index)}
                 >
-                  <img
-                    src={image.url}
-                    alt={image.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+                  {image.beforeUrl ? (
+                    <div className="flex h-full">
+                      <img
+                        src={image.beforeUrl}
+                        alt={`${image.title} Before`}
+                        className="w-1/2 h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <img
+                        src={image.afterUrl}
+                        alt={`${image.title} After`}
+                        className="w-1/2 h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={image.url}
+                      alt={image.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-0 left-0 right-0 p-6">
                       <h3 className="text-white font-bold text-lg mb-2">{image.title}</h3>
@@ -278,11 +294,26 @@ export default function Gallery() {
               className="max-w-5xl w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                src={filteredImages[selectedImage].url}
-                alt={filteredImages[selectedImage].title}
-                className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl"
-              />
+              {filteredImages[selectedImage].beforeUrl ? (
+                <div className="flex w-full max-h-[80vh]">
+                  <img
+                    src={filteredImages[selectedImage].beforeUrl}
+                    alt={`${filteredImages[selectedImage].title} Before`}
+                    className="w-1/2 h-auto object-contain rounded-l-2xl shadow-2xl"
+                  />
+                  <img
+                    src={filteredImages[selectedImage].afterUrl}
+                    alt={`${filteredImages[selectedImage].title} After`}
+                    className="w-1/2 h-auto object-contain rounded-r-2xl shadow-2xl"
+                  />
+                </div>
+              ) : (
+                <img
+                  src={filteredImages[selectedImage].url}
+                  alt={filteredImages[selectedImage].title}
+                  className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl"
+                />
+              )}
               <div className="text-center mt-6">
                 <h3 className="text-white text-2xl font-bold mb-2">{filteredImages[selectedImage].title}</h3>
                 <p className="text-white/80 text-lg mb-4">{filteredImages[selectedImage].description}</p>
@@ -297,3 +328,5 @@ export default function Gallery() {
     </div>
   );
 }
+
+
