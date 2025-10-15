@@ -1,8 +1,27 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Award, Users, Shield, ArrowRight, CheckCircle, Star, Calendar, Clock, TrendingUp, Heart, Zap } from 'lucide-react';
+import { getFeedback, type Feedback } from '../services/apiService';
 
 export default function Home() {
+  const [dynamicTestimonials, setDynamicTestimonials] = useState<Feedback[]>([]);
+
+  useEffect(() => {
+    const loadTestimonials = async () => {
+      try {
+        const response = await getFeedback({ admin: false, limit: 3, page: 1 });
+        if (response.success && response.data) {
+          setDynamicTestimonials(response.data.feedback || []);
+        }
+      } catch (err) {
+        console.error('Failed to load testimonials:', err);
+      }
+    };
+
+    loadTestimonials();
+  }, []);
+
   const treatments = [
     {
       title: 'Skin Treatments',
@@ -43,7 +62,14 @@ export default function Home() {
     { text: 'Comprehensive follow-up care', icon: Calendar },
   ];
 
-  const testimonials = [
+  // Use dynamic testimonials, fallback to static if none loaded
+  const testimonials = dynamicTestimonials.length > 0 ? dynamicTestimonials.slice(0, 3).map(t => ({
+    name: t.name,
+    role: t.treatment,
+    image: t.image,
+    text: t.review,
+    rating: t.rating,
+  })) : [
     {
       name: 'Sarah Johnson',
       role: 'Skin Treatment Patient',
