@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Eye, Edit, Trash2, Search } from 'lucide-react';
+import { Eye, Edit, Trash2, Search, FileText, FileSpreadsheet } from 'lucide-react';
 import { getContacts, deleteContact, updateContact } from '../services/apiService';
 import type { Contact, ContactUpdateData } from '../services/apiService';
 import DeleteModal from './DeleteModal';
+import { exportToPDF, exportToExcel, formatDate, type ExportData } from '../utils/exportUtils';
 
 type Props = { pageSize?: number; className?: string };
 
@@ -60,7 +61,7 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
   const fetchPage = async (p = 1) => {
     setLoading(true);
     try {
-      const params: any = { page: p, limit: pageSize };
+      const params: Record<string, string | number> = { page: p, limit: pageSize };
       if (searchTerm) params.search = searchTerm;
       if (dateFrom) params.dateFrom = dateFrom;
       if (dateTo) params.dateTo = dateTo;
@@ -160,12 +161,70 @@ export default function ContactListTable({ pageSize = 10, className = '' }: Prop
     }
   };
 
+  const handleExportPDF = () => {
+    const exportData: ExportData = {
+      headers: ['Name', 'Email', 'Subject', 'Message', 'Status', 'Created', 'Updated'],
+      rows: contacts.map(contact => [
+        contact.name,
+        contact.email,
+        contact.subject,
+        contact.message,
+        contact.status,
+        formatDate(contact.createdAt),
+        contact.updatedAt ? formatDate(contact.updatedAt) : '--'
+      ]),
+      filename: `contacts_${new Date().toISOString().split('T')[0]}`,
+      title: 'Contact List Report'
+    };
+    exportToPDF(exportData);
+  };
+
+  const handleExportExcel = () => {
+    const exportData: ExportData = {
+      headers: ['Name', 'Email', 'Subject', 'Message', 'Status', 'Created', 'Updated'],
+      rows: contacts.map(contact => [
+        contact.name,
+        contact.email,
+        contact.subject,
+        contact.message,
+        contact.status,
+        formatDate(contact.createdAt),
+        contact.updatedAt ? formatDate(contact.updatedAt) : '--'
+      ]),
+      filename: `contacts_${new Date().toISOString().split('T')[0]}`,
+      title: 'Contact List Report'
+    };
+    exportToExcel(exportData);
+  };
+
   return (
     <div className={`bg-white rounded-lg shadow p-3 sm:p-4 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
         <h2 className="text-lg sm:text-xl font-semibold">Contacts</h2>
-        <div className="text-sm text-gray-500">
-          {loading ? 'Loading...' : `${contacts.length} items`}
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-gray-500">
+            {loading ? 'Loading...' : `${contacts.length} items`}
+          </div>
+          <div className="flex gap-1">
+            <button
+              onClick={handleExportPDF}
+              disabled={contacts.length === 0}
+              className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              title="Export to PDF"
+            >
+              <FileText className="w-4 h-4" />
+              PDF
+            </button>
+            <button
+              onClick={handleExportExcel}
+              disabled={contacts.length === 0}
+              className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              title="Export to Excel"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              Excel
+            </button>
+          </div>
         </div>
       </div>
 

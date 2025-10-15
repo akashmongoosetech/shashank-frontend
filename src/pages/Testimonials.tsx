@@ -10,15 +10,12 @@ export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicTestimonials, setDynamicTestimonials] = useState<Feedback[]>([]);
   const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null);
-  const [loading, setLoading] = useState(true);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [error, setError] = useState('');
 
   // Load dynamic testimonials and stats
   useEffect(() => {
     const loadTestimonials = async () => {
       try {
-        setLoading(true);
         const [feedbackResponse, statsResponse] = await Promise.all([
           getFeedback({ admin: false, limit: 20, page: 1 }),
           getFeedbackStats()
@@ -33,9 +30,6 @@ export default function Testimonials() {
         }
       } catch (err) {
         console.error('Failed to load testimonials:', err);
-        setError('Failed to load testimonials');
-      } finally {
-        setLoading(false);
       }
     };
 

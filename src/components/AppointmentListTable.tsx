@@ -1,29 +1,30 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  Mail, 
-  Phone, 
-  FileText, 
-  Search, 
-  Filter, 
-  ChevronLeft, 
+import {
+  Calendar,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  FileText,
+  Search,
+  Filter,
+  ChevronLeft,
   ChevronRight,
   Trash2,
   CheckCircle,
   XCircle,
-  Eye
+  Eye,
+  FileSpreadsheet
 } from 'lucide-react';
 import {
   getAppointments,
   updateAppointment,
   deleteAppointment,
-  Appointment,
-  AppointmentUpdateData
+  Appointment
 } from '../services/apiService';
 import DeleteModal from './DeleteModal';
+import { exportToPDF, exportToExcel, type ExportData } from '../utils/exportUtils';
 
 interface AppointmentListTableProps {
   className?: string;
@@ -74,10 +75,6 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name' | 'status'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editingId, setEditingId] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editingData, setEditingData] = useState<AppointmentUpdateData>({});
   const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -241,6 +238,52 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
     fetchPage(1);
   };
 
+  const handleExportPDF = () => {
+    const exportData: ExportData = {
+      headers: ['Reference', 'Name', 'Email', 'Phone', 'Treatment', 'Preferred Date', 'Preferred Time', 'Status', 'Priority', 'Confirmed Date', 'Confirmed Time', 'Created'],
+      rows: appointments.map(appointment => [
+        appointment.referenceId || `APT-${appointment._id.slice(-8).toUpperCase()}`,
+        appointment.name,
+        appointment.email,
+        appointment.phone,
+        appointment.treatmentType,
+        formatDate(appointment.preferredDate),
+        appointment.preferredTime,
+        appointment.status,
+        appointment.priority,
+        appointment.confirmedDate ? formatDate(appointment.confirmedDate) : '--',
+        appointment.confirmedTime || '--',
+        formatDate(appointment.createdAt)
+      ]),
+      filename: `appointments_${new Date().toISOString().split('T')[0]}`,
+      title: 'Appointment List Report'
+    };
+    exportToPDF(exportData);
+  };
+
+  const handleExportExcel = () => {
+    const exportData: ExportData = {
+      headers: ['Reference', 'Name', 'Email', 'Phone', 'Treatment', 'Preferred Date', 'Preferred Time', 'Status', 'Priority', 'Confirmed Date', 'Confirmed Time', 'Created'],
+      rows: appointments.map(appointment => [
+        appointment.referenceId || `APT-${appointment._id.slice(-8).toUpperCase()}`,
+        appointment.name,
+        appointment.email,
+        appointment.phone,
+        appointment.treatmentType,
+        formatDate(appointment.preferredDate),
+        appointment.preferredTime,
+        appointment.status,
+        appointment.priority,
+        appointment.confirmedDate ? formatDate(appointment.confirmedDate) : '--',
+        appointment.confirmedTime || '--',
+        formatDate(appointment.createdAt)
+      ]),
+      filename: `appointments_${new Date().toISOString().split('T')[0]}`,
+      title: 'Appointment List Report'
+    };
+    exportToExcel(exportData);
+  };
+
   return (
     <div className={`bg-white rounded-lg shadow-lg ${className}`}>
       {/* Header */}
@@ -256,6 +299,24 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
               className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
             >
               Refresh
+            </button>
+            <button
+              onClick={handleExportPDF}
+              disabled={appointments.length === 0}
+              className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-1"
+              title="Export to PDF"
+            >
+              <FileText className="w-4 h-4" />
+              PDF
+            </button>
+            <button
+              onClick={handleExportExcel}
+              disabled={appointments.length === 0}
+              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-1"
+              title="Export to Excel"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              Excel
             </button>
           </div>
         </div>
@@ -739,7 +800,7 @@ export default function AppointmentListTable({ className = '' }: AppointmentList
                   onClick={() => {
                     // Could add edit functionality here
                     setViewingAppointment(null);
-                    setEditingId(viewingAppointment._id);
+                    // setEditingId(viewingAppointment._id);
                   }}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
