@@ -301,6 +301,7 @@ class ApiService {
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      cache: 'no-cache',
       ...options,
     };
 

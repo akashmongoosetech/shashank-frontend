@@ -22,24 +22,66 @@ function App() {
     <ErrorBoundary>
       <HelmetProvider>
         <Router>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/treatments" element={<Treatments />} />
-              <Route path="/book-appointment" element={<BookAppointment />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/testimonials" element={<Testimonials />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/contacts" element={<ContactListTable />} />
-              <Route path="/admin/appointments" element={<AppointmentListTable />} />
-              <Route path="/admin/blogs" element={<BlogAdmin />} />
-            </Routes>
-            <WhatsAppButton />
-          </Layout>
+          <Routes>
+            <Route path="/" element={
+              <Layout>
+                <Home />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/about" element={
+              <Layout>
+                <About />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/treatments" element={
+              <Layout>
+                <Treatments />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/book-appointment" element={
+              <Layout>
+                <BookAppointment />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/gallery" element={
+              <Layout>
+                <Gallery />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/testimonials" element={
+              <Layout>
+                <Testimonials />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/blog" element={
+              <Layout>
+                <Blog />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/blog/:slug" element={
+              <Layout>
+                <BlogPost />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/contact" element={
+              <Layout>
+                <Contact />
+                <WhatsAppButton />
+              </Layout>
+            } />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/contacts" element={<ContactListTable />} />
+            <Route path="/admin/appointments" element={<AppointmentListTable />} />
+            <Route path="/admin/blogs" element={<BlogAdmin />} />
+          </Routes>
         </Router>
       </HelmetProvider>
     </ErrorBoundary>
